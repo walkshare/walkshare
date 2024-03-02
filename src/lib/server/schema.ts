@@ -31,6 +31,7 @@ export const Event = createInsertSchema(event, {
 
 export const EventWithItinerary = Event.extend({
 	itinerary: ItineraryWithPoi.array(),
+	author: User,
 });
 
 export type Event = z.infer<typeof Event>;

@@ -182,7 +182,7 @@ export const app = router({
 		.input(z.object({
 			id: z.string().uuid(),
 		}))
-		.output(Event)
+		.output(EventWithItinerary)
 		.query(async ({ input }) => {
 			const data = await db.query.event.findFirst({
 				where: eq(event.id, input.id),
@@ -193,6 +193,7 @@ export const app = router({
 						},
 						orderBy: [asc(itinerary.index)],
 					},
+					author: true,
 				},
 			});
 
@@ -246,6 +247,7 @@ export const app = router({
 						},
 						orderBy: [asc(itinerary.index)],
 					},
+					author: true,
 				},
 			});
 

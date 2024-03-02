@@ -16,7 +16,7 @@
 		</div>
 	</figure>
 
-	<div class="card-body prose max-w-full">
+	<div class="card-body p-1 prose max-w-full">
 		<h2 class="card-title">{poi.name}</h2>
 		<h3>{poi.address}</h3>
 
@@ -27,7 +27,7 @@
 		</div>
 
 		<div class="card-actions justify-end">
-			<button class="btn btn-primary ml-auto">See more</button>
+			<button class="btn btn-sm btn-primary ml-auto">See more</button>
 		</div>
 	</div>
 </div>

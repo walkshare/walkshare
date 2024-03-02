@@ -19,7 +19,7 @@
 		});
 	});
 
-	$: events = createQuery({
+	const events = createQuery({
 		queryKey: ['events'],
 		queryFn: () => trpc.event.getAll.mutate({
 			query: '',
@@ -86,6 +86,8 @@
 		<ul
 			class="menu p-0 w-full lg:w-[33vw] min-h-full bg-base-200 text-base-content"
 		>
+			<Navbar />
+
 			<div class="event-grid grid gap-4">
 				{#if $events.isError}
 					{$events.error.message}
@@ -97,7 +99,7 @@
 					{/each}
 				{/if}
 			</div>
-			<Navbar />
+
 			<a
 				class="btn btn-primary m-4 mt-auto place-self-end"
 				href="/events/create"

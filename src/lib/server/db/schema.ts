@@ -128,6 +128,10 @@ export const itineraryRelations = relations(itinerary, ({ one }) => ({
 	}),
 }));
 
-export const eventRelations = relations(event, ({ many }) => ({
+export const eventRelations = relations(event, ({ many, one }) => ({
 	itinerary: many(itinerary),
+	author: one(user, {
+		fields: [event.authorId],
+		references: [user.id],
+	}),
 }));
