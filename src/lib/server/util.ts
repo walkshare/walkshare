@@ -1,6 +1,6 @@
 import sanitize from 'sanitize-html';
 
-export function sanitizeHtml(html: string) {
+function sanitizeHtml(html: string) {
 	return sanitize(html, {
 		allowedTags: [
 			'b',
@@ -23,4 +23,12 @@ export function sanitizeHtml(html: string) {
 			a: ['href'],
 		},
 	});
+}
+
+export function convertMarkdown(
+	markdown: string,
+	converter: showdown.Converter
+) {
+	const html = converter.makeHtml(markdown);
+	return sanitizeHtml(converter.makeHtml(html));
 }

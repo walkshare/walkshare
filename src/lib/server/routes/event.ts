@@ -5,7 +5,8 @@ import { Event } from '../schema';
 import { db } from '../db';
 import { event } from '../db/schema';
 import showdown from 'showdown';
-import { sanitizeHtml } from '../util';
+import { convertMarkdown } from '../util';
+import { and, eq } from 'drizzle-orm';
 
 const convertor = new showdown.Converter();
 
@@ -14,14 +15,43 @@ export const app = router({
 		.input(Event.omit({ id: true, authorId: true, createdAt: true }))
 		.output(z.void())
 		.mutation(async ({ input, ctx }) => {
-			const html = convertor.makeHtml(input.description);
-			const clean = sanitizeHtml(html);
+			const clean = convertMarkdown(input.description, convertor);
 
 			await db.insert(event).values({
 				...input,
 				authorId: ctx.session.user.userId,
 				description: clean,
 			});
+		}),
+	update: protectedProcedure
+		.input(Event.partial().required({ id: true }))
+		.output(z.void())
+		.mutation(async ({ input, ctx }) => {
+			if (input.description) {
+				input.description = convertMarkdown(input.description, convertor);
+			}
+
+			await db
+				.update(event)
+				.set({
+					...input,
+				})
+				.where(
+					and(
+						eq(event.id, input.id),
+						eq(event.authorId, ctx.session.user.userId)
+					)
+				);
+		}),
+	delete: protectedProcedure
+		.input(z.string().uuid())
+		.output(z.void())
+		.mutation(async ({ input, ctx }) => {
+			await db
+				.delete(event)
+				.where(
+					and(eq(event.id, input), eq(event.authorId, ctx.session.user.userId))
+				);
 		}),
 });
 
