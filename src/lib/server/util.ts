@@ -4,7 +4,7 @@ import showdown from 'showdown';
 
 import { TEXT_EMBEDDER_PORT } from '$env/static/private';
 
-import { Event } from './schema';
+import { Event, Poi } from './schema';
 
 const convertor = new showdown.Converter();
 const ai = axios.create({
@@ -44,6 +44,11 @@ export function convertMarkdown(
 
 export function createEventEmbedding(event: Event): Promise<number[]> {
 	const text = `${event.name} ${event.description} ${event.tags.join(' ')}`;
+	return embedText(text);
+}
+
+export function createPoiEmbedding(poi: Poi): Promise<number[]> {
+	const text = `${poi.name} ${poi.address} ${poi.description} ${poi.tags.join(' ')}`;
 	return embedText(text);
 }
 

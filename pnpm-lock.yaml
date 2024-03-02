@@ -20,9 +20,6 @@ dependencies:
   axios:
     specifier: ^1.6.7
     version: 1.6.7
-  dotenv:
-    specifier: ^16.4.5
-    version: 16.4.5
   drizzle-orm:
     specifier: ^0.29.4
     version: 0.29.4(@types/pg@8.11.2)(pg@8.11.3)
@@ -97,6 +94,9 @@ devDependencies:
   daisyui:
     specifier: ^4.7.2
     version: 4.7.2(postcss@8.4.35)
+  dotenv:
+    specifier: ^16.4.5
+    version: 16.4.5
   drizzle-kit:
     specifier: ^0.20.14
     version: 0.20.14
@@ -1770,7 +1770,7 @@ packages:
   /dotenv@16.4.5:
     resolution: {integrity: sha512-ZmdL2rui+eB2YwhsWzjInR8LldtZHGDoQ1ugH85ppHKwpUHL7j7rN0Ti9NCnGiQbhaZ11FpR+7ao1dNsmduNUg==}
     engines: {node: '>=12'}
-    dev: false
+    dev: true
 
   /dreamopt@0.8.0:
     resolution: {integrity: sha512-vyJTp8+mC+G+5dfgsY+r3ckxlz+QMX40VjPQsZc5gxVAxLmi64TBoVkP54A/pRAXMXsbu2GMMBrZPxNv23waMg==}

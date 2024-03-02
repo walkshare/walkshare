@@ -1,0 +1,19 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "checkJs": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "resolveJsonModule": true,
+        "skipLibCheck": true,
+        "sourceMap": true,
+        "strict": true,
+        "moduleResolution": "NodeNext",
+        "module": "NodeNext",
+        "outDir": "scripts-dist"
+    },
+    "include": [
+        "src/lib/server/db/schema.ts",
+        "scripts"
+    ]
+}
