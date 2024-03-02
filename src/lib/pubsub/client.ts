@@ -1,4 +1,4 @@
-import EventEmitter from 'events';
+import EventEmitter from 'eventemitter3';
 import solace from 'solclientjs';
 
 const factory = new solace.SolclientFactoryProperties();

@@ -12,16 +12,20 @@ import { embedText, maxInnerProduct } from '../util';
 
 export const app = router({
 	getOne: procedure
-		.meta({openapi: {
-			method: 'GET',
-			path: '/poi/getone',
-			summary: 'Get an poi',
-			description: 'Get an poi with the corresponding id.',
-			tags: ['poi'],
-		}})
-		.input(z.string().uuid())
+		.meta({
+			openapi: {
+				method: 'GET',
+				path: '/poi/{id}',
+				summary: 'Get an poi',
+				description: 'Get an poi with the corresponding id.',
+				tags: ['poi'],
+			},
+		})
+		.input(z.object({
+			id: z.string().uuid(),
+		}))
 		.output(Poi).query(async ({ input }) => {
-			const data = await db.query.poi.findFirst({ where: eq(poi.id, input) });
+			const data = await db.query.poi.findFirst({ where: eq(poi.id, input.id) });
 
 			if (!data) {
 				throw new TRPCError({
@@ -32,13 +36,15 @@ export const app = router({
 			return data;
 		}),
 	getAll: procedure
-		.meta({openapi: {
-			method: 'GET',
-			path: '/poi/getall',
-			summary: 'Get all poi\'s',
-			description: 'Get all poi\'s',
-			tags: ['poi'],
-		}})
+		.meta({
+			openapi: {
+				method: 'GET',
+				path: '/poi',
+				summary: 'Get all POIs',
+				description: 'Get all POIs',
+				tags: ['poi'],
+			},
+		})
 		.input(z.object({
 			query: z.string().max(128),
 			tags: z.string().array(),
@@ -60,7 +66,7 @@ export const app = router({
 
 			if (input.lat && input.lng && input.distance) {
 				filters.push(or(gte(poi.latitude, input.lat - input.distance), lte(poi.latitude, input.lng + input.distance))!);
-				filters.push(or(gte(poi.longitude, input.lat - input.distance), lte(poi.longitude, input.lng - input.distance))!);
+				filters.push(or(gte(poi.longitude, input.lat - input.distance), lte(poi.longitude, input.lng + input.distance))!);
 			}
 
 			const data = await db.query.poi.findMany({

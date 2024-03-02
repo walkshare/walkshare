@@ -9,11 +9,10 @@ export class Subscriber extends Client {
 		this.session.on(
 			solace.SessionEventCode.MESSAGE,
 			message => {
-				console.log('GOT MESSAGE');
 				const destination = message.getDestination();
 
 				if (destination) {
-					this.emit(destination.getName(), message.getBinaryAttachment());
+					this.emit(destination.getName(), message);
 				}
 			},
 		);
@@ -55,13 +54,13 @@ export class Subscriber extends Client {
 		);
 	}
 
-	public async subscribe(topic: string, fn: (message: string) => void) {
+	public async subscribe(topic: string, fn: (message: solace.Message) => void) {
 		super.on(topic, fn);
 
 		return this.startSubscription(topic);
 	}
 
-	public async unsubscribe(topic: string, fn: (message: string) => void) {
+	public async unsubscribe(topic: string, fn: (message: solace.Message) => void) {
 		super.off(topic, fn);
 
 		if (this.listenerCount(topic) === 0) {

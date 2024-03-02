@@ -24,9 +24,14 @@ async function embedText(text) {
 
 async function main() {
 	let rawdata = fs.readFileSync("./data/places.json", "utf8");
+	let rawdata2 = fs.readFileSync("./data/places2.json", "utf8");
 	let places = JSON.parse(rawdata);
+	let places2 = JSON.parse(rawdata);
 
 	for (let place of places) {
+		const d = places2.find(p => p.id === place.id);
+		if (!d) continue;
+
 		const poi = {
 			name: place.name,
 			adress: place.address,
@@ -41,7 +46,7 @@ async function main() {
 			description, thumbnail, address, embedding) VALUES ($1, $2, $3, $4,
 				$5, $6, $7, $8)`,
 			[place.name, place.point.coordinates[1],
-			place.point.coordinates[0], place.types, "test", "test",
+			place.point.coordinates[0], place.types, d.description, "test",
 			place.address, `[${embedding.join(',')}]`]);
 	}
 }

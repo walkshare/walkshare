@@ -18,7 +18,7 @@
 
 	<div class="card-body prose max-w-full">
 		<h2 class="card-title">{event.name}</h2>
-		<h3>{event}</h3>
+		<h3>{event.name}</h3>
 
 		<div class="line-clamp-5 prose max-w-full">
 			<!-- SAFETY: the description is sanitized server-side -->

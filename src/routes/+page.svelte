@@ -28,7 +28,7 @@
 		}),
 	});
 
-	$: points = createQuery({
+	const points = createQuery({
 		queryKey: ['points'],
 		queryFn: () => trpc.poi.getAll.query({
 			query: '',
