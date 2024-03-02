@@ -20,6 +20,8 @@
 		"@trpc/server": "^10.45.1",
 		"@types/node": "^20.11.24",
 		"@types/pg": "^8.11.2",
+		"@types/sanitize-html": "^2.11.0",
+		"@types/showdown": "^2.0.6",
 		"@typescript-eslint/eslint-plugin": "^7.1.0",
 		"@typescript-eslint/parser": "^7.1.0",
 		"autoprefixer": "^10.4.18",
@@ -45,6 +47,8 @@
 		"drizzle-zod": "^0.5.1",
 		"lucia": "^2.7.7",
 		"pg": "^8.11.3",
+		"sanitize-html": "^2.12.1",
+		"showdown": "^2.1.0",
 		"trpc-openapi": "^1.2.0",
 		"trpc-sveltekit": "^3.5.28",
 		"zod": "^3.22.4"
