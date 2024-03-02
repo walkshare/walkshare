@@ -6,8 +6,8 @@ settings:
 
 dependencies:
   '@lucia-auth/adapter-postgresql':
-    specifier: ^3.1.0
-    version: 3.1.0(lucia@2.7.7)(pg@8.11.3)
+    specifier: ^2.0.2
+    version: 2.0.2(lucia@2.7.7)(pg@8.11.3)
   '@tanstack/svelte-query':
     specifier: ^5.24.1
     version: 5.24.1(svelte@4.2.12)
@@ -663,16 +663,13 @@ packages:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.4.15
 
-  /@lucia-auth/adapter-postgresql@3.1.0(lucia@2.7.7)(pg@8.11.3):
-    resolution: {integrity: sha512-W6LXc9nfoyAwew5JCDnv63i4BKT3wLbmG9+QtnfmsD0xfOLOUiIi3wA1t0cpIXaJsq69/I3TRYXdb8e8yXRo9Q==}
+  /@lucia-auth/adapter-postgresql@2.0.2(lucia@2.7.7)(pg@8.11.3):
+    resolution: {integrity: sha512-gQ7SlFu+gxQj2IX2J8ZVivcLBbdnf9SbNQOVWkJxZOdY1uaaIQGeNfEDld2Awy02VrXmA4sjHsbkJx1JPVw2+A==}
     peerDependencies:
-      '@neondatabase/serverless': 0.7.x
-      lucia: 3.x
+      lucia: ^2.0.0
       pg: ^8.8.0
       postgres: ^3.3.0
     peerDependenciesMeta:
-      '@neondatabase/serverless':
-        optional: true
       pg:
         optional: true
       postgres:
