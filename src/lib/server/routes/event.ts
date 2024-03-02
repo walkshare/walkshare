@@ -3,7 +3,7 @@ import { protectedProcedure } from '$lib/server/trpc';
 import { z } from 'zod';
 import { Event } from '../schema';
 import { db } from '../db';
-import { event } from '../db/schema';
+import { attendance, event } from '../db/schema';
 import showdown from 'showdown';
 import { convertMarkdown } from '../util';
 import { and, eq } from 'drizzle-orm';
@@ -24,7 +24,11 @@ export const app = router({
 			});
 		}),
 	update: protectedProcedure
-		.input(Event.partial().required({ id: true }))
+		.input(
+			Event.partial()
+				.required({ id: true })
+				.omit({ authorId: true, createdAt: true })
+		)
 		.output(z.void())
 		.mutation(async ({ input, ctx }) => {
 			if (input.description) {
@@ -51,6 +55,28 @@ export const app = router({
 				.delete(event)
 				.where(
 					and(eq(event.id, input), eq(event.authorId, ctx.session.user.userId))
+				);
+		}),
+	join: protectedProcedure
+		.input(z.string().uuid())
+		.output(z.void())
+		.mutation(async ({ input, ctx }) => {
+			await db.insert(attendance).values({
+				eventId: input,
+				userId: ctx.session.user.userId,
+			});
+		}),
+	leave: protectedProcedure
+		.input(z.string().uuid())
+		.output(z.void())
+		.mutation(async ({ input, ctx }) => {
+			await db
+				.delete(attendance)
+				.where(
+					and(
+						eq(attendance.eventId, input),
+						eq(attendance.userId, ctx.session.user.userId)
+					)
 				);
 		}),
 });
