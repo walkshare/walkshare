@@ -1,12 +1,12 @@
 import { TRPCError } from '@trpc/server';
-import { and, arrayOverlaps, eq, SQL } from 'drizzle-orm';
+import { and, arrayOverlaps, asc, eq, SQL } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { procedure, router } from '$lib/server/trpc';
 import { protectedProcedure } from '$lib/server/trpc';
 
 import { db } from '../db';
-import { attendance, event } from '../db/schema';
+import { attendance, event, itinerary } from '../db/schema';
 import { Event } from '../schema';
 import { convertMarkdown, embedText, maxInnerProduct } from '../util';
 
@@ -87,7 +87,17 @@ export const app = router({
 				);
 		}),
 	getOne: procedure.input(z.string().uuid()).output(Event).query(async ({ input }) => {
-		const data = await db.query.event.findFirst({ where: eq(event.id, input) });
+		const data = await db.query.event.findFirst({
+			where: eq(event.id, input),
+			with: {
+				itinerary: {
+					with: {
+						poi: true,
+					},
+					orderBy: [asc(itinerary.index)],
+				},
+			},
+		});
 
 		if (!data) {
 			throw new TRPCError({

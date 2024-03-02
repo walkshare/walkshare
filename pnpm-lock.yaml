@@ -8,9 +8,6 @@ dependencies:
   '@beyonk/svelte-mapbox':
     specifier: ^9.1.1
     version: 9.1.1(svelte@4.2.12)
-  '@iconify-json/map':
-    specifier: ^1.1.9
-    version: 1.1.9
   '@lucia-auth/adapter-postgresql':
     specifier: ^2.0.2
     version: 2.0.2(lucia@2.7.7)(pg@8.11.3)
@@ -23,6 +20,9 @@ dependencies:
   axios:
     specifier: ^1.6.7
     version: 1.6.7
+  date-picker-svelte:
+    specifier: ^2.11.0
+    version: 2.11.0(svelte@4.2.12)
   drizzle-orm:
     specifier: ^0.29.4
     version: 0.29.4(@types/pg@8.11.2)(pg@8.11.3)
@@ -47,6 +47,9 @@ dependencies:
   showdown:
     specifier: ^2.1.0
     version: 2.1.0
+  solclientjs:
+    specifier: ^10.15.0
+    version: 10.15.0
   trpc-openapi:
     specifier: ^1.2.0
     version: 1.2.0(@trpc/server@10.45.1)(zod@3.22.4)
@@ -61,6 +64,9 @@ devDependencies:
   '@iconify-json/ic':
     specifier: ^1.1.17
     version: 1.1.17
+  '@iconify-json/map':
+    specifier: ^1.1.9
+    version: 1.1.9
   '@sveltejs/adapter-auto':
     specifier: ^3.1.1
     version: 3.1.1(@sveltejs/kit@2.5.2)
@@ -653,10 +659,11 @@ packages:
     resolution: {integrity: sha512-xdpJ+jxhydRVLD3HNYXh0atTotJIJK3EsHFuWTz2Necu5tR+NCx54GyTYM0YABE+aDkncQIvrlLJlC+XShlsRQ==}
     dependencies:
       '@iconify/types': 2.0.0
-    dev: false
+    dev: true
 
   /@iconify/types@2.0.0:
     resolution: {integrity: sha512-+wluvCrRhXrhyOmRDJ3q8mux9JkKy5SJ/v8ol2tu4FVjyYvtEzkc/3pK15ET6RKg4b4w4BmTk1+gsCUhf21Ykg==}
+    dev: true
 
   /@iconify/utils@2.1.22:
     resolution: {integrity: sha512-6UHVzTVXmvO8uS6xFF+L/QTSpTzA/JZxtgU+KYGFyDYMEObZ1bu/b5l+zNJjHy+0leWjHI+C0pXlzGvv3oXZMA==}
@@ -1702,6 +1709,14 @@ packages:
     transitivePeerDependencies:
       - postcss
     dev: true
+
+  /date-picker-svelte@2.11.0(svelte@4.2.12):
+    resolution: {integrity: sha512-iaYxY2mZN6uJ1AidZUFy0MorGzdMUeaD5G8z6NIbg22GIn/9ZdnkonTY7I3+zrPp85eGZx/Ws9sCJVhMyV7sog==}
+    peerDependencies:
+      svelte: ^3.24.0 || ^4.0.0
+    dependencies:
+      svelte: 4.2.12
+    dev: false
 
   /debug@4.3.4:
     resolution: {integrity: sha512-PRWFHuSU3eDtQJPvnNY7Jcket1j0t5OuOsFzPPzsekD52Zl8qUfFIPEiswXqIvHWGVHOgX+7G/vCNNhehwxfkQ==}
@@ -3833,6 +3848,11 @@ packages:
     resolution: {integrity: sha512-g9Q1haeby36OSStwb4ntCGGGaKsaVSjQ68fBxoQcutl5fS1vuY18H3wSt3jFyFtrkx+Kz0V1G85A4MyAdDMi2Q==}
     engines: {node: '>=8'}
     dev: true
+
+  /solclientjs@10.15.0:
+    resolution: {integrity: sha512-6OGJZ6y+LAGACPojImeeiQBbHSFmiimmFzBa43kOQ0HQ26XSbt0ied89YaB3ISQOqzsq2Y1xx0ipKOXYz/5xnw==}
+    engines: {node: '>=10.0.0'}
+    dev: false
 
   /sorcery@0.11.0:
     resolution: {integrity: sha512-J69LQ22xrQB1cIFJhPfgtLuI6BpWRiWu1Y3vSsIwK/eAScqJxd/+CJlUuHQRdX2C9NGFamq+KqNywGgaThwfHw==}

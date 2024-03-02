@@ -35,8 +35,8 @@ var TopicSubscriber = function (solaceModule) {
 				function (sessionEvent) {
 					console.log(
 						"Connection failed to the message router: " +
-							sessionEvent.infoStr +
-							" - check correct parameter values and connectivity!"
+						sessionEvent.infoStr +
+						" - check correct parameter values and connectivity!"
 					);
 				}
 			);
@@ -47,9 +47,9 @@ var TopicSubscriber = function (solaceModule) {
 				function (message) {
 					console.log(
 						'Received message: "' +
-							message.getBinaryAttachment() +
-							'", details:\n' +
-							message.dump()
+						message.getBinaryAttachment() +
+						'", details:\n' +
+						message.dump()
 					);
 				}
 			);
@@ -67,8 +67,8 @@ var TopicSubscriber = function (solaceModule) {
 			if (subscribedTo.includes(topicName)) {
 				console.log(
 					'Already subscribed to "' +
-						topicName +
-						'" and ready to receive messages.'
+					topicName +
+					'" and ready to receive messages.'
 				);
 			} else {
 				console.log("Subscribing to topic: " + topicName);
@@ -113,8 +113,8 @@ var TopicSubscriber = function (solaceModule) {
 			} else {
 				console.log(
 					'Cannot unsubscribe because not subscribed to the topic "' +
-						topicName +
-						'"'
+					topicName +
+					'"'
 				);
 			}
 		} else {
