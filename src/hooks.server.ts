@@ -6,7 +6,11 @@ import { createContext } from '$lib/server/context';
 import { auth } from '$lib/server/lucia';
 import router from '$lib/server/routes';
 
-const handleTrpc: Handle = createTRPCHandle({ router, createContext, url: '/api' });
+const handleTrpc: Handle = createTRPCHandle({
+	router,
+	createContext,
+	url: '/api',
+});
 
 const handleAuth: Handle = ({ event, resolve }) => {
 	event.locals.auth = auth.handleRequest(event);

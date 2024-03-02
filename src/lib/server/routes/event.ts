@@ -7,8 +7,8 @@ import { protectedProcedure } from '$lib/server/trpc';
 
 import { db } from '../db';
 import { attendance, event, itinerary } from '../db/schema';
-import { Event } from '../schema';
-import { convertMarkdown, embedText, maxInnerProduct } from '../util';
+import { Event, EventWithItinerary } from '../schema';
+import { convertMarkdown, createEventEmbedding, embedText, maxInnerProduct } from '../util';
 
 export const app = router({
 	create: protectedProcedure
@@ -18,16 +18,36 @@ export const app = router({
 				authorId: true,
 				createdAt: true,
 				embedding: true,
+			}).extend({
+				itinerary: z.string().uuid().array(),
 			}),
 		)
-		.output(z.void())
+		.output(z.string().uuid())
 		.mutation(async ({ input, ctx }) => {
 			input.description = convertMarkdown(input.description);
 
-			await db.insert(event).values({
+			const list = input.itinerary;
+
+			// @ts-expect-error - we remove this
+			input.itinerary = undefined;
+
+			const embedding = await createEventEmbedding(input);
+
+			const [{ id }] = await db.insert(event).values({
 				...input,
+				embedding,
 				authorId: ctx.session.user.userId,
+			}).returning({
+				id: event.id,
 			});
+
+			await db.insert(itinerary).values(list.map((l, i) => ({
+				eventId: id,
+				poiId: l,
+				index: i,
+			})));
+
+			return id;
 		}),
 	update: protectedProcedure
 		.input(
@@ -44,7 +64,8 @@ export const app = router({
 				input.description = convertMarkdown(input.description);
 			}
 
-			await db
+
+			const [e] = await db
 				.update(event)
 				.set(input)
 				.where(
@@ -52,7 +73,18 @@ export const app = router({
 						eq(event.id, input.id),
 						eq(event.authorId, ctx.session.user.userId),
 					),
-				);
+				).returning({
+					name: event.name,
+					description: event.description,
+					tags: event.tags,
+				});
+
+			const embedding = await createEventEmbedding(e);
+
+			await db
+				.update(event)
+				.set({ embedding })
+				.where(eq(event.id, input.id));
 		}),
 	delete: protectedProcedure
 		.input(z.string().uuid())
@@ -113,7 +145,7 @@ export const app = router({
 		limit: z.number().int().min(10).max(50),
 		query: z.string().max(128),
 		tags: z.string().array(),
-	})).output(Event.array()).query(async ({ input }) => {
+	})).output(EventWithItinerary.array()).query(async ({ input }) => {
 		const filters: SQL[] = [];
 		const orders: SQL<number>[] = [];
 
@@ -131,6 +163,14 @@ export const app = router({
 			limit: input.limit,
 			where: and(...filters),
 			orderBy: orders,
+			with: {
+				itinerary: {
+					with: {
+						poi: true,
+					},
+					orderBy: [asc(itinerary.index)],
+				},
+			},
 		});
 
 		return data;

@@ -1,8 +1,10 @@
 <script lang="ts">
+	import { TRPCClientError } from '@trpc/client';
 	import { DateInput } from 'date-picker-svelte';
 
 	import { trpc } from '$lib/client';
-	import { TRPCClientError } from '@trpc/client';
+	import type { Poi } from '$lib/server/schema';
+
 	let hovering = false;
 	let input: HTMLInputElement;
 	let files: FileList;
@@ -16,9 +18,14 @@
 		endsAt: new Date(),
 	};
 
+	let itinerary: Poi[] = [];
+
 	async function submit() {
 		try {
-			await trpc.event.create.mutate(event);
+			await trpc.event.create.mutate({
+				...event,
+				itinerary: itinerary.map(poi => poi.id),
+			});
 		} catch (e) {
 			if (e instanceof TRPCClientError) {
 				error = e.message;
@@ -30,6 +37,15 @@
 		event.tags.push(tag);
 		event = event;
 		tag = '';
+	}
+
+	async function createItinerary() {
+		navigator.geolocation.getCurrentPosition(async (position) => {
+			itinerary = await trpc.itinerary.create.query({
+				lat: position.coords.latitude,
+				long: position.coords.longitude,
+			});
+		});
 	}
 
 	let error: string | undefined = undefined;
@@ -103,6 +119,26 @@
 		{#if error}
 			{error}
 		{/if}
+
+		<h2>Itinerary</h2>
+		<button on:click={createItinerary}>
+			generate itinerary :sparkles:
+		</button>
+
+		<div  class="itinerary-grid grid gap-2">
+			{#each itinerary as poi}
+				<div>
+					{poi.name}
+				</div>
+			{/each}
+		</div>
+
 		<button class="btn" on:click={submit}> Create </button>
 	</form>
 </div>
+
+<style>
+	.itinerary-grid {
+		grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr))
+	}
+</style>

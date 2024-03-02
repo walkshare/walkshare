@@ -8,6 +8,7 @@
 	import Pin from '~icons/map/postal-code';
 	import { PUBLIC_MAPBOX_API_KEY } from '$env/static/public';
 	import { trpc } from '$lib/client';
+	import EventCard from '$lib/components/EventCard.svelte';
 
 	let coords: [number, number] | undefined = undefined;
 
@@ -86,10 +87,7 @@
 					loading...
 				{:else if $events.isSuccess}
 					{#each $events.data as event}
-						<div class="bg-white p-4 rounded-lg shadow-md">
-							<h2 class="text-xl font-bold">{event.name}</h2>
-							<p>{event.description}</p>
-						</div>
+						<EventCard {event} />
 					{/each}
 				{/if}
 			</div>

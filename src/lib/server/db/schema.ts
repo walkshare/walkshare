@@ -127,3 +127,7 @@ export const itineraryRelations = relations(itinerary, ({ one }) => ({
 		references: [poi.id],
 	}),
 }));
+
+export const eventRelations = relations(event, ({ many }) => ({
+	itinerary: many(itinerary),
+}));
