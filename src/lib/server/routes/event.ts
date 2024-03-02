@@ -1,19 +1,21 @@
-import { router, procedure } from '$lib/server/trpc';
-import { protectedProcedure } from '$lib/server/trpc';
+import { and, eq } from 'drizzle-orm';
+import showdown from 'showdown';
 import { z } from 'zod';
-import { Event } from '../schema';
+
+import { procedure, router } from '$lib/server/trpc';
+import { protectedProcedure } from '$lib/server/trpc';
+
 import { db } from '../db';
 import { attendance, event } from '../db/schema';
-import showdown from 'showdown';
+import { Event } from '../schema';
 import { convertMarkdown } from '../util';
-import { and, eq } from 'drizzle-orm';
 
 const convertor = new showdown.Converter();
 
 export const app = router({
 	create: protectedProcedure
 		.input(
-			Event.omit({ id: true, authorId: true, createdAt: true, embedding: true })
+			Event.omit({ id: true, authorId: true, createdAt: true, embedding: true }),
 		)
 		.output(z.void())
 		.mutation(async ({ input, ctx }) => {
@@ -28,7 +30,7 @@ export const app = router({
 		.input(
 			Event.partial()
 				.required({ id: true })
-				.omit({ authorId: true, createdAt: true })
+				.omit({ authorId: true, createdAt: true }),
 		)
 		.output(z.void())
 		.mutation(async ({ input, ctx }) => {
@@ -44,8 +46,8 @@ export const app = router({
 				.where(
 					and(
 						eq(event.id, input.id),
-						eq(event.authorId, ctx.session.user.userId)
-					)
+						eq(event.authorId, ctx.session.user.userId),
+					),
 				);
 		}),
 	delete: protectedProcedure
@@ -55,7 +57,7 @@ export const app = router({
 			await db
 				.delete(event)
 				.where(
-					and(eq(event.id, input), eq(event.authorId, ctx.session.user.userId))
+					and(eq(event.id, input), eq(event.authorId, ctx.session.user.userId)),
 				);
 		}),
 	join: protectedProcedure
@@ -76,8 +78,8 @@ export const app = router({
 				.where(
 					and(
 						eq(attendance.eventId, input),
-						eq(attendance.userId, ctx.session.user.userId)
-					)
+						eq(attendance.userId, ctx.session.user.userId),
+					),
 				);
 		}),
 });
