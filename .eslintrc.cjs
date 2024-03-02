@@ -33,5 +33,6 @@ module.exports = {
 		'comma-dangle': ['error', 'always-multiline'],
 		"simple-import-sort/imports": "error",
 		"simple-import-sort/exports": "error",
+		'object-property-newline': ['error', { allowAllPropertiesOnSameLine: false }],
 	}
 };
