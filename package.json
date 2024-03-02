@@ -15,6 +15,7 @@
 	},
 	"devDependencies": {
 		"@iconify-json/ic": "^1.1.17",
+		"@iconify-json/map": "^1.1.9",
 		"@sveltejs/adapter-auto": "^3.1.1",
 		"@sveltejs/kit": "^2.5.2",
 		"@sveltejs/vite-plugin-svelte": "^3.0.2",
