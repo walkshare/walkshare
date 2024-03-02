@@ -1,6 +1,9 @@
 import { router } from '$lib/server/trpc';
+
 import event from './event';
-export const app = router({ event });
+import poi from './poi';
+
+export const app = router({ event, poi });
 
 export default app;
 export type Router = typeof app;
