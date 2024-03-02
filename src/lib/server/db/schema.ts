@@ -1,9 +1,38 @@
-import { bigint, pgTable, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
+import { bigint, pgTable, real, text, timestamp, uuid, varchar } from 'drizzle-orm/pg-core';
 
 export const poi = pgTable('poi', {
 	id: uuid('id').primaryKey().defaultRandom(),
 	name: text('name').notNull(),
 	description: text('description').notNull(),
+	// stored as base64 webp
+	thumbnail: text('thumbnail').notNull(),
+	latitude: real('latitude').notNull(),
+	longitude: real('longitude').notNull(),
+	tags: text('tags').array().notNull(),
+});
+
+export const event = pgTable('event', {
+	id: uuid('id').primaryKey().defaultRandom(),
+	authorId: uuid('author_id').references(() => user.id).notNull(),
+	name: text('name').notNull(),
+	description: text('description').notNull(),
+	tags: text('tags').array().notNull(),
+	itinerary: uuid('itinerary').array().notNull(),
+	startsAt: timestamp('start_time', { withTimezone: true }).notNull(),
+	endsAt: timestamp('end_time', { withTimezone: true }).notNull(),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const attendance = pgTable('attendance', {
+	eventId: uuid('event_id').references(() => event.id).notNull(),
+	userId: uuid('user_id').references(() => user.id).notNull(),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
+});
+
+export const friend = pgTable('friend', {
+	userId: uuid('user_id').references(() => user.id).notNull(),
+	friendId: uuid('friend_id').references(() => user.id).notNull(),
+	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
 // Table definitions for Lucia Auth
