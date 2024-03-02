@@ -7,6 +7,7 @@ import {
 	uuid,
 	varchar,
 } from 'drizzle-orm/pg-core';
+import { vector } from 'pgvector/drizzle-orm';
 
 export const poi = pgTable('poi', {
 	id: uuid('id').primaryKey().defaultRandom(),
@@ -18,6 +19,7 @@ export const poi = pgTable('poi', {
 	longitude: real('longitude').notNull(),
 	tags: text('tags').array().notNull(),
 	address: text('address').notNull(),
+	embedding: vector('embedding', { dimensions: 768 }).notNull(),
 });
 
 export const event = pgTable('event', {
@@ -34,6 +36,7 @@ export const event = pgTable('event', {
 	createdAt: timestamp('created_at', { withTimezone: true })
 		.defaultNow()
 		.notNull(),
+	embedding: vector('embedding', { dimensions: 768 }).notNull(),
 });
 
 export const attendance = pgTable('attendance', {

@@ -1,4 +1,11 @@
 import sanitize from 'sanitize-html';
+import { Event } from './schema';
+import axios from 'axios';
+import { TEXT_EMBEDDER_PORT } from '$env/static/private';
+
+const ai = axios.create({
+	baseURL: 'http://127.0.0.1:' + TEXT_EMBEDDER_PORT,
+});
 
 function sanitizeHtml(html: string) {
 	return sanitize(html, {
@@ -31,4 +38,12 @@ export function convertMarkdown(
 ) {
 	const html = converter.makeHtml(markdown);
 	return sanitizeHtml(converter.makeHtml(html));
+}
+
+export async function createEventEmbedding(event: Event) {
+
+}
+
+async function embedText(text: string) {
+	
 }

@@ -12,15 +12,16 @@ const convertor = new showdown.Converter();
 
 export const app = router({
 	create: protectedProcedure
-		.input(Event.omit({ id: true, authorId: true, createdAt: true }))
+		.input(
+			Event.omit({ id: true, authorId: true, createdAt: true, embedding: true })
+		)
 		.output(z.void())
 		.mutation(async ({ input, ctx }) => {
-			const clean = convertMarkdown(input.description, convertor);
+			input.description = convertMarkdown(input.description, convertor);
 
 			await db.insert(event).values({
 				...input,
 				authorId: ctx.session.user.userId,
-				description: clean,
 			});
 		}),
 	update: protectedProcedure
