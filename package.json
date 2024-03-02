@@ -15,6 +15,7 @@
 	},
 	"devDependencies": {
 		"@iconify-json/ic": "^1.1.17",
+		"@iconify-json/map": "^1.1.9",
 		"@sveltejs/adapter-auto": "^3.1.1",
 		"@sveltejs/kit": "^2.5.2",
 		"@sveltejs/vite-plugin-svelte": "^3.0.2",
@@ -44,11 +45,11 @@
 	},
 	"dependencies": {
 		"@beyonk/svelte-mapbox": "^9.1.1",
-		"@iconify-json/map": "^1.1.9",
 		"@lucia-auth/adapter-postgresql": "^2.0.2",
 		"@tanstack/svelte-query": "^5.24.1",
 		"@trpc/client": "^10.45.1",
 		"axios": "^1.6.7",
+		"date-picker-svelte": "^2.11.0",
 		"drizzle-orm": "^0.29.4",
 		"drizzle-zod": "^0.5.1",
 		"lucia": "^2.7.7",
@@ -56,6 +57,7 @@
 		"pgvector": "^0.1.8",
 		"sanitize-html": "^2.12.1",
 		"showdown": "^2.1.0",
+		"solclientjs": "^10.15.0",
 		"trpc-openapi": "^1.2.0",
 		"trpc-sveltekit": "^3.5.28",
 		"zod": "^3.22.4"

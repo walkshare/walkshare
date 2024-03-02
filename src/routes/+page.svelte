@@ -3,6 +3,7 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';
 
+	import Plus from '~icons/ic/baseline-plus';
 	import Circle from '~icons/map/circle';
 	import Pin from '~icons/map/postal-code';
 	import { PUBLIC_MAPBOX_API_KEY } from '$env/static/public';
@@ -92,6 +93,10 @@
 					{/each}
 				{/if}
 			</div>
+
+			<a class="btn btn-primary mt-auto place-self-end" href="/events/create">
+				<Plus /> Create event
+			</a>
 		</ul>
 	</div>
 </div>
