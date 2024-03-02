@@ -5,7 +5,7 @@ import { OPENAI_API_KEY } from '$env/static/private';
 
 import { db } from './db';
 import { poi } from './db/schema';
-import type { Poi } from './schema';
+
 const openai = new OpenAi({
 	apiKey: OPENAI_API_KEY,
 })
@@ -26,11 +26,6 @@ export async function createItinerary(lat: number, long: number)  {
 		where: and(...filters),
 	})
     
-	query(input, data)
-
-}
-
-async function query(input: string, data: Poi[]) {
 	const response = await openai.chat.completions.create({
 		messages: [
 			{
@@ -45,5 +40,7 @@ async function query(input: string, data: Poi[]) {
 		model: 'gpt-3.5-turbo',
 	})
 
-	return response.choices[0].message.content;
+	return response.choices[0].message.content!.split('\n').map((it) => {
+		return data.find((e) => e.id == it)!
+	}).filter((e) => e);
 }
