@@ -1,16 +1,13 @@
 import { and, eq } from 'drizzle-orm';
-import showdown from 'showdown';
 import { z } from 'zod';
 
-import { procedure, router } from '$lib/server/trpc';
+import { router } from '$lib/server/trpc';
 import { protectedProcedure } from '$lib/server/trpc';
 
 import { db } from '../db';
 import { attendance, event } from '../db/schema';
 import { Event } from '../schema';
 import { convertMarkdown } from '../util';
-
-const convertor = new showdown.Converter();
 
 export const app = router({
 	create: protectedProcedure
@@ -19,7 +16,7 @@ export const app = router({
 		)
 		.output(z.void())
 		.mutation(async ({ input, ctx }) => {
-			input.description = convertMarkdown(input.description, convertor);
+			input.description = convertMarkdown(input.description);
 
 			await db.insert(event).values({
 				...input,

@@ -1,10 +1,12 @@
 import axios from 'axios';
 import sanitize from 'sanitize-html';
+import showdown from 'showdown';
 
 import { TEXT_EMBEDDER_PORT } from '$env/static/private';
 
 import { Event } from './schema';
 
+const convertor = new showdown.Converter();
 const ai = axios.create({
 	baseURL: 'http://127.0.0.1:' + TEXT_EMBEDDER_PORT,
 });
@@ -36,10 +38,8 @@ function sanitizeHtml(html: string) {
 
 export function convertMarkdown(
 	markdown: string,
-	converter: showdown.Converter,
 ) {
-	const html = converter.makeHtml(markdown);
-	return sanitizeHtml(converter.makeHtml(html));
+	return sanitizeHtml(converter.makeHtml(markdown));
 }
 
 export function createEventEmbedding(event: Event): Promise<number[]> {
