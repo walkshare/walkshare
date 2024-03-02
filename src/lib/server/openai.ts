@@ -1,4 +1,4 @@
-import { and, gte, lte, or, SQL } from 'drizzle-orm';
+import { and, gte, lte, or, type SQL } from 'drizzle-orm';
 import OpenAi from 'openai';
 
 import { OPENAI_API_KEY } from '$env/static/private';
@@ -10,7 +10,7 @@ const openai = new OpenAi({
 	apiKey: OPENAI_API_KEY,
 })
 
-export async function createItinerary(lat: number, long: number)  {
+export async function createItinerary(lat: number, long: number) {
 
 	const distance = 0.2;
 
@@ -25,7 +25,7 @@ export async function createItinerary(lat: number, long: number)  {
 	const data = await db.query.poi.findMany({
 		where: and(...filters),
 	})
-    
+
 	const response = await openai.chat.completions.create({
 		messages: [
 			{

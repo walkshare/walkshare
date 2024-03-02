@@ -208,7 +208,7 @@ export const app = router({
 	getAll: procedure
 		.meta({
 			openapi: {
-				method: 'GET',
+				method: 'POST',
 				path: '/event',
 				summary: 'Get all events',
 				description: 'Get all events',
@@ -221,7 +221,7 @@ export const app = router({
 			query: z.string().max(128),
 			tags: z.string().array(),
 		})).output(EventWithItinerary.array())
-		.query(async ({ input }) => {
+		.mutation(async ({ input }) => {
 			const filters: SQL[] = [];
 			const orders: SQL<number>[] = [];
 

@@ -26,7 +26,7 @@ async function main() {
 	let rawdata = fs.readFileSync("./data/places.json", "utf8");
 	let rawdata2 = fs.readFileSync("./data/places2.json", "utf8");
 	let places = JSON.parse(rawdata);
-	let places2 = JSON.parse(rawdata);
+	let places2 = JSON.parse(rawdata2);
 
 	for (let place of places) {
 		const d = places2.find(p => p.id === place.id);

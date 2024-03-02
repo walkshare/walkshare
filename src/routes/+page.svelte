@@ -20,7 +20,7 @@
 
 	$: events = createQuery({
 		queryKey: ['events'],
-		queryFn: () => trpc.event.getAll.query({
+		queryFn: () => trpc.event.getAll.mutate({
 			query: '',
 			tags: [],
 			page: 1,
@@ -30,7 +30,7 @@
 
 	const points = createQuery({
 		queryKey: ['points'],
-		queryFn: () => trpc.poi.getAll.query({
+		queryFn: () => trpc.poi.getAll.mutate({
 			query: '',
 			tags: [],
 			lat: coords?.[1] ?? 0,

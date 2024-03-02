@@ -38,7 +38,7 @@ export const app = router({
 	getAll: procedure
 		.meta({
 			openapi: {
-				method: 'GET',
+				method: 'POST',
 				path: '/poi',
 				summary: 'Get all POIs',
 				description: 'Get all POIs',
@@ -51,7 +51,7 @@ export const app = router({
 			lat: z.number().min(-90).max(90),
 			lng: z.number().min(-180).max(180),
 			distance: z.number().min(0),
-		})).output(Poi.array()).query(async ({ input }) => {
+		})).output(Poi.array()).mutation(async ({ input }) => {
 			const filters: SQL[] = [];
 			const orders: SQL<number>[] = [];
 
