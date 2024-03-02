@@ -59,6 +59,7 @@
 		"sanitize-html": "^2.12.1",
 		"showdown": "^2.1.0",
 		"solclientjs": "^10.15.0",
+		"sveltekit-i18n": "^2.4.2",
 		"trpc-openapi": "^1.2.0",
 		"trpc-sveltekit": "^3.5.28",
 		"zod": "^3.22.4"

@@ -2,7 +2,7 @@
 	import { DateInput } from 'date-picker-svelte';
 
 	import { trpc } from '$lib/client';
-
+	import { TRPCClientError } from '@trpc/client';
 	let hovering = false;
 	let input: HTMLInputElement;
 	let files: FileList;
@@ -10,21 +10,34 @@
 	let event = {
 		name: '',
 		description: '',
-		tags: [],
+		tags: [] as string[],
 		thumbnail: '',
 		startsAt: new Date(),
 		endsAt: new Date(),
 	};
 
 	async function submit() {
-		const response = await trpc.event.create.mutate(event);
-
-		
+		try {
+			await trpc.event.create.mutate(event);
+		} catch (e) {
+			if (e instanceof TRPCClientError) {
+				error = e.message;
+			}
+		}
 	}
+
+	function addTag() {
+		event.tags.push(tag);
+		event = event;
+		tag = '';
+	}
+
+	let error: string | undefined = undefined;
+	let tag: string;
 </script>
 
 <div class="flex justify-center">
-	<form class="max-w-7xl prose">
+	<form class="max-w-7xl prose flex flex-col">
 		<button
 			class="bg-base-300 rounded-2xl aspect-video flex place-items-center justify-center relative w-full h-full"
 			on:click={() => input.click()}
@@ -65,14 +78,31 @@
 			/>
 		</button>
 
+		<input class="input" placeholder="Add name..." />
+
+		<textarea class="textarea" placeholder="Add description..."></textarea>
+
+		{#each event.tags as t}
+			{t}
+		{/each}
+
+		<form on:submit|preventDefault={addTag}>
+			<input class="input" placeholder="Add tag..." bind:value={tag} />
+		</form>
 
 		<div class="label">
-			<span class="label-text">Starts at</span>
+			<span class="label-text">Starts at:</span>
 		</div>
-		<DateInput
-			bind:value={event.startsAt}
-			class="w-full"
-			id="starts-at"
-		/>
+		<DateInput bind:value={event.startsAt} class="w-full" id="starts-at" />
+
+		<div class="label">
+			<span class="label-text">Ends at:</span>
+		</div>
+		<DateInput bind:value={event.startsAt} class="w-full" id="starts-at" />
+
+		{#if error}
+			{error}
+		{/if}
+		<button class="btn" on:click={submit}> Create </button>
 	</form>
 </div>
