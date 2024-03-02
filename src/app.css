@@ -8,10 +8,18 @@
 	.btn {
 		@apply rounded-xl;
 	}
+
+	.input {
+		@apply autofill:!bg-none autofill:!bg-base-100 !border-gray-600 !outline-none;
+	}
 }
 
 @layer base {
 	:root {
 		font-family: 'DM Sans', sans-serif;
 	}
+}
+
+html, body {
+	height: 100%;
 }
