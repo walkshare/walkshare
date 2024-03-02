@@ -32,7 +32,7 @@ export const actions: Actions = {
 			const key = await auth.useKey(
 				'username',
 				result.data.username.toLowerCase(),
-				result.data.password,
+				result.data.password
 			);
 
 			const session = await auth.createSession({
