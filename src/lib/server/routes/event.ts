@@ -32,14 +32,12 @@ export const app = router({
 		.output(z.void())
 		.mutation(async ({ input, ctx }) => {
 			if (input.description) {
-				input.description = convertMarkdown(input.description, convertor);
+				input.description = convertMarkdown(input.description);
 			}
 
 			await db
 				.update(event)
-				.set({
-					...input,
-				})
+				.set(input)
 				.where(
 					and(
 						eq(event.id, input.id),
