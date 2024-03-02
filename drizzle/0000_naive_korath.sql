@@ -1,12 +1,12 @@
 CREATE TABLE IF NOT EXISTS "attendance" (
 	"event_id" uuid NOT NULL,
-	"user_id" uuid NOT NULL,
+	"user_id" varchar(15) NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "event" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
-	"author_id" uuid NOT NULL,
+	"author_id" varchar(15) NOT NULL,
 	"name" text NOT NULL,
 	"description" text NOT NULL,
 	"tags" text[] NOT NULL,
@@ -17,8 +17,8 @@ CREATE TABLE IF NOT EXISTS "event" (
 );
 --> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "friend" (
-	"user_id" uuid NOT NULL,
-	"friend_id" uuid NOT NULL,
+	"user_id" varchar(15) NOT NULL,
+	"friend_id" varchar(15) NOT NULL,
 	"created_at" timestamp with time zone DEFAULT now() NOT NULL
 );
 --> statement-breakpoint

@@ -13,7 +13,7 @@ export const poi = pgTable('poi', {
 
 export const event = pgTable('event', {
 	id: uuid('id').primaryKey().defaultRandom(),
-	authorId: uuid('author_id').references(() => user.id).notNull(),
+	authorId: varchar('author_id', { length: 15 }).references(() => user.id).notNull(),
 	name: text('name').notNull(),
 	description: text('description').notNull(),
 	tags: text('tags').array().notNull(),
@@ -25,13 +25,13 @@ export const event = pgTable('event', {
 
 export const attendance = pgTable('attendance', {
 	eventId: uuid('event_id').references(() => event.id).notNull(),
-	userId: uuid('user_id').references(() => user.id).notNull(),
+	userId: varchar('user_id', { length: 15 }).references(() => user.id).notNull(),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
 export const friend = pgTable('friend', {
-	userId: uuid('user_id').references(() => user.id).notNull(),
-	friendId: uuid('friend_id').references(() => user.id).notNull(),
+	userId: varchar('user_id', { length: 15 }).references(() => user.id).notNull(),
+	friendId: varchar('friend_id', { length: 15 }).references(() => user.id).notNull(),
 	createdAt: timestamp('created_at', { withTimezone: true }).defaultNow().notNull(),
 });
 
