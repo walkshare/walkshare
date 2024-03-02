@@ -10,7 +10,8 @@
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "eslint ."
+		"lint": "eslint .",
+		"load": "tsc -p tsconfig.scripts.json && node scripts-dist/scripts/load.js"
 	},
 	"devDependencies": {
 		"@iconify-json/ic": "^1.1.17",
@@ -27,6 +28,7 @@
 		"@typescript-eslint/parser": "^7.1.0",
 		"autoprefixer": "^10.4.18",
 		"daisyui": "^4.7.2",
+		"dotenv": "^16.4.5",
 		"drizzle-kit": "^0.20.14",
 		"eslint": "^8.57.0",
 		"eslint-plugin-simple-import-sort": "^12.0.0",
@@ -46,7 +48,6 @@
 		"@tanstack/svelte-query": "^5.24.1",
 		"@trpc/client": "^10.45.1",
 		"axios": "^1.6.7",
-		"dotenv": "^16.4.5",
 		"drizzle-orm": "^0.29.4",
 		"drizzle-zod": "^0.5.1",
 		"lucia": "^2.7.7",
