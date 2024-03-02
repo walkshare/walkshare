@@ -3,5 +3,8 @@ export default {
 	content: [
 		'./src/**/*.{html,svelte,ts}',
 	],
-	plugins: [],
+	plugins: [
+		require('@tailwindcss/typography'),
+		require('daisyui'),
+	],
 }
