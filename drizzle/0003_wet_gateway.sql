@@ -1,0 +1,1 @@
+ALTER TABLE "friend" ADD COLUMN "pending" boolean DEFAULT true NOT NULL;

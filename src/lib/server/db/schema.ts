@@ -1,5 +1,6 @@
 import {
 	bigint,
+	boolean,
 	pgTable,
 	real,
 	text,
@@ -61,6 +62,7 @@ export const friend = pgTable('friend', {
 	createdAt: timestamp('created_at', { withTimezone: true })
 		.defaultNow()
 		.notNull(),
+	pending: boolean('pending').default(true).notNull(),
 });
 
 // Table definitions for Lucia Auth
