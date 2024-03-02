@@ -9,11 +9,12 @@
 	import { PUBLIC_MAPBOX_API_KEY } from '$env/static/public';
 	import { trpc } from '$lib/client';
 	import EventCard from '$lib/components/EventCard.svelte';
+	import Navbar from '$lib/components/Navbar.svelte';
 
 	let coords: [number, number] | undefined = undefined;
 
 	onMount(() => {
-		navigator.geolocation.watchPosition(position => {
+		navigator.geolocation.watchPosition((position) => {
 			coords = [position.coords.longitude, position.coords.latitude];
 		});
 	});
@@ -43,7 +44,9 @@
 <div class="drawer lg:drawer-open">
 	<input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
 	<div class="drawer-content flex flex-col items-center justify-center">
-		<label for="my-drawer-2" class="btn btn-primary drawer-button lg:hidden">Open drawer</label>
+		<label for="my-drawer-2" class="btn btn-primary drawer-button lg:hidden"
+			>Open drawer</label
+		>
 
 		<Map
 			accessToken={PUBLIC_MAPBOX_API_KEY}
@@ -78,8 +81,11 @@
 	</div>
 
 	<div class="drawer-side">
-		<label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label>
-		<ul class="menu p-4 w-full lg:w-[33vw] min-h-full bg-base-200 text-base-content">
+		<label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"
+		></label>
+		<ul
+			class="menu p-0 w-full lg:w-[33vw] min-h-full bg-base-200 text-base-content"
+		>
 			<div class="event-grid grid gap-4">
 				{#if $events.isError}
 					{$events.error.message}
@@ -91,8 +97,11 @@
 					{/each}
 				{/if}
 			</div>
-
-			<a class="btn btn-primary mt-auto place-self-end" href="/events/create">
+			<Navbar />
+			<a
+				class="btn btn-primary m-4 mt-auto place-self-end"
+				href="/events/create"
+			>
 				<Plus /> Create event
 			</a>
 		</ul>
@@ -101,6 +110,6 @@
 
 <style>
 	.event-grid {
-		grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr))
+		grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
 	}
 </style>
