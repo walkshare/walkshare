@@ -117,6 +117,13 @@ export const userSession = pgTable('user_session', {
 	idleExpires: bigint('idle_expires', { mode: 'number' }).notNull(),
 });
 
-export const eventRelations = relations(event, ({ many }) => ({
-	itinerary: many(itinerary),
+export const itineraryRelations = relations(itinerary, ({ one }) => ({
+	event: one(event, {
+		fields: [itinerary.eventId],
+		references: [event.id],
+	}),
+	poi: one(poi, {
+		fields: [itinerary.poiId],
+		references: [poi.id],
+	}),
 }));

@@ -12,10 +12,11 @@ var TopicSubscriber = function (solaceModule) {
 		new Promise((resolve) => {
 			try {
 				subscriber.session = solace.SolclientFactory.createSession({
-					url: process.env.HOSTURL,
-					vpnName: process.env.VPN,
-					userName: process.env.USER,
-					password: process.env.PASSWORD,
+					// solace.SessionProperties
+					url: process.env.SOLACE_HOSTURL,
+					vpnName: process.env.SOLACE_VPN,
+					userName: process.env.SOLACE_USER,
+					password: process.env.SOLACE_PASSWORD,
 				});
 			} catch (error) {
 				console.log(error.toString());
@@ -153,14 +154,12 @@ solace.SolclientFactory.init(factoryProps);
 solace.SolclientFactory.setLogLevel(solace.LogLevel.WARN);
 
 // create the subscriber, specifying the name of the subscription topic
-var subscriber = new TopicSubscriber(solace, "walkshare");
+var subscriber = new TopicSubscriber(solace, "hello_world");
 
 (async () => {
 	await subscriber.connect();
 
-	subscriber.subscribe("walkshare");
-	subscriber.subscribe("testcategory2");
-	subscriber.unsubscribe("testcategory2");
+	subscriber.subscribe("hello_world");
 
 	// wait to be told to exit
 	console.log("Press Ctrl-C to exit");

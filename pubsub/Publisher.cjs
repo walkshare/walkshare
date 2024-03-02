@@ -13,10 +13,10 @@ var TopicPublisher = function (solaceModule, topicName) {
 			try {
 				publisher.session = solace.SolclientFactory.createSession({
 					// solace.SessionProperties
-					url: process.env.HOSTURL,
-					vpnName: process.env.VPN,
-					userName: process.env.USER,
-					password: process.env.PASSWORD,
+					url: process.env.SOLACE_HOSTURL,
+					vpnName: process.env.SOLACE_VPN,
+					userName: process.env.SOLACE_USER,
+					password: process.env.SOLACE_PASSWORD,
 				});
 			} catch (error) {
 				console.log(error.toString());
@@ -91,13 +91,13 @@ solace.SolclientFactory.init(factoryProps);
 solace.SolclientFactory.setLogLevel(solace.LogLevel.WARN);
 
 // create the publisher, specifying the name of the subscription topic
-var publisher = new TopicPublisher(solace, "walkshare");
+var publisher = new TopicPublisher(solace, "hello_world");
 
 // publish message to Solace PubSub+ Event Broker
 (async () => {
 	await publisher.connect();
 
-	publisher.publish("test2");
+	publisher.publish("some message");
 
 	// disconnect
 	publisher.disconnect();
