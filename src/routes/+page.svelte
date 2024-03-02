@@ -20,18 +20,18 @@
 		<label for="my-drawer-2" class="btn btn-primary drawer-button lg:hidden">Open drawer</label>
 
 		<Map
-		accessToken={PUBLIC_MAPBOX_API_KEY}
-		center={coords}
-		style="mapbox://styles/mapbox/dark-v11"
-		zoom={15}
-	>
-		<Marker
-			lat={coords[1]}
-			lng={coords[0]}
-			label="You are here"
-			color={0xff0000}
-		/>
-	</Map>
+			accessToken={PUBLIC_MAPBOX_API_KEY}
+			center={coords}
+			style="mapbox://styles/mapbox/dark-v11"
+			zoom={15}
+		>
+			<Marker
+				lat={coords[1]}
+				lng={coords[0]}
+				label="You are here"
+				color={0xff0000}
+			/>
+		</Map>
 	</div>
 	<div class="drawer-side">
 		<label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label> 

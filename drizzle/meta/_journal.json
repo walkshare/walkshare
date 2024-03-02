@@ -15,6 +15,13 @@
       "when": 1709358834505,
       "tag": "0001_large_wrecking_crew",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1709362256133,
+      "tag": "0002_good_santa_claus",
+      "breakpoints": true
     }
   ]
 }
