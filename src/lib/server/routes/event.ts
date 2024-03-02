@@ -12,6 +12,13 @@ import { convertMarkdown, createEventEmbedding, embedText, maxInnerProduct } fro
 
 export const app = router({
 	create: protectedProcedure
+		.meta({openapi: {
+			method: 'POST',
+			path: '/event/create',
+			summary: 'Create event',
+			description: 'Creates an event',
+			tags: ['event'],
+		}})
 		.input(
 			Event.omit({
 				id: true,
@@ -50,6 +57,13 @@ export const app = router({
 			return id;
 		}),
 	update: protectedProcedure
+		.meta({openapi: {
+			method: 'PATCH',
+			path: '/event/update',
+			summary: 'Update event',
+			description: 'Updates an event',
+			tags: ['event'],
+		}})
 		.input(
 			Event.partial()
 				.required({ id: true })
@@ -87,6 +101,13 @@ export const app = router({
 				.where(eq(event.id, input.id));
 		}),
 	delete: protectedProcedure
+		.meta({openapi: {
+			method: 'DELETE',
+			path: '/event/delete',
+			summary: 'Delete event',
+			description: 'Deletes an event',
+			tags: ['event'],
+		}})
 		.input(z.string().uuid())
 		.output(z.void())
 		.mutation(async ({ input, ctx }) => {
@@ -97,6 +118,13 @@ export const app = router({
 				);
 		}),
 	join: protectedProcedure
+		.meta({openapi: {
+			method: 'POST',
+			path: '/event/join',
+			summary: 'Join event',
+			description: 'Join an event with the current logged in account.',
+			tags: ['event'],
+		}})
 		.input(z.string().uuid())
 		.output(z.void())
 		.mutation(async ({ input, ctx }) => {
@@ -106,6 +134,13 @@ export const app = router({
 			});
 		}),
 	leave: protectedProcedure
+		.meta({openapi: {
+			method: 'POST',
+			path: '/event/leave',
+			summary: 'Leave event',
+			description: 'Leave an event with the current logged in account.',
+			tags: ['event'],
+		}})
 		.input(z.string().uuid())
 		.output(z.void())
 		.mutation(async ({ input, ctx }) => {
@@ -118,63 +153,82 @@ export const app = router({
 					),
 				);
 		}),
-	getOne: procedure.input(z.string().uuid()).output(Event).query(async ({ input }) => {
-		const data = await db.query.event.findFirst({
-			where: eq(event.id, input),
-			with: {
-				itinerary: {
-					with: {
-						poi: true,
+	getOne: procedure
+		.meta({openapi: {
+			method: 'GET',
+			path: '/event/getone',
+			summary: 'Get an event',
+			description: 'Get an event with the corresponding id.',
+			tags: ['event'],
+		}})
+		.input(z.string().uuid())
+		.output(Event)
+		.query(async ({ input }) => {
+			const data = await db.query.event.findFirst({
+				where: eq(event.id, input),
+				with: {
+					itinerary: {
+						with: {
+							poi: true,
+						},
+						orderBy: [asc(itinerary.index)],
 					},
-					orderBy: [asc(itinerary.index)],
 				},
-			},
-		});
+			});
 
-		if (!data) {
-			throw new TRPCError({
-				message: 'event_not_found',
-				code: 'NOT_FOUND',
-			})
-		}
+			if (!data) {
+				throw new TRPCError({
+					message: 'event_not_found',
+					code: 'NOT_FOUND',
+				})
+			}
 
-		return data;
-	}),
-	getAll: procedure.input(z.object({
-		page: z.number().int().min(1),
-		limit: z.number().int().min(10).max(50),
-		query: z.string().max(128),
-		tags: z.string().array(),
-	})).output(EventWithItinerary.array()).query(async ({ input }) => {
-		const filters: SQL[] = [];
-		const orders: SQL<number>[] = [];
+			return data;
+		}),
+	getAll: procedure
+		.meta({openapi: {
+			method: 'GET',
+			path: '/event/getall',
+			summary: 'Get all events',
+			description: 'Get all events',
+			tags: ['event'],
+		}})
+		.input(z.object({
+			page: z.number().int().min(1),
+			limit: z.number().int().min(10).max(50),
+			query: z.string().max(128),
+			tags: z.string().array(),
+		})).output(EventWithItinerary.array())
+		.query(async ({ input }) => {
+			const filters: SQL[] = [];
+			const orders: SQL<number>[] = [];
 
-		if (input.tags.length) {
-			filters.push(arrayOverlaps(event.tags, input.tags));
-		}
+			if (input.tags.length) {
+				filters.push(arrayOverlaps(event.tags, input.tags));
+			}
 
-		if (input.query) {
-			const embedded = await embedText(input.query);
-			orders.push(maxInnerProduct(event.embedding, embedded));
-		}
+			if (input.query) {
+				const embedded = await embedText(input.query);
+				orders.push(maxInnerProduct(event.embedding, embedded));
+			}
 
-		const data = await db.query.event.findMany({
-			offset: (input.page - 1) * input.limit,
-			limit: input.limit,
-			where: and(...filters),
-			orderBy: orders,
-			with: {
-				itinerary: {
-					with: {
-						poi: true,
+			const data = await db.query.event.findMany({
+				offset: (input.page - 1) * input.limit,
+				limit: input.limit,
+				where: and(...filters),
+				orderBy: orders,
+				with: {
+					itinerary: {
+						with: {
+							poi: true,
+						},
+						orderBy: [asc(itinerary.index)],
 					},
-					orderBy: [asc(itinerary.index)],
 				},
-			},
-		});
+			});
 
-		return data;
-	}),
+			return data;
+		}),
 });
 
 export default app;
