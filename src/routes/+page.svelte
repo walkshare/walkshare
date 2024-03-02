@@ -3,6 +3,8 @@
 	import { createQuery } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';
 
+	import Circle from '~icons/map/circle';
+	import Pin from '~icons/map/postal-code';
 	import { PUBLIC_MAPBOX_API_KEY } from '$env/static/public';
 	import { trpc } from '$lib/client';
 
@@ -23,47 +25,76 @@
 			limit: 10,
 		}),
 	});
+
+	$: points = createQuery({
+		queryKey: ['points'],
+		queryFn: () => trpc.poi.getAll.query({
+			query: '',
+			tags: [],
+			lat: coords?.[1] ?? 0,
+			lng: coords?.[0] ?? 0,
+			distance: 0.2,
+		}),
+	});
 </script>
 
-{#if coords}
-	<div class="w-screen h-screen grid grid-cols-2">
-		<div class="event-grid grid gap-4">
-			{#if $events.isError}
-				{$events.error.message}
-			{:else if $events.isLoading}
-				loading...
-			{:else if $events.isSuccess}
-				{#each $events.data as event}
-					<div class="bg-white p-4 rounded-lg shadow-md">
-						<h2 class="text-xl font-bold">{event.name}</h2>
-						<p>{event.description}</p>
-					</div>
-				{/each}
-			{/if}
-		</div>
+<div class="drawer lg:drawer-open">
+	<input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
+	<div class="drawer-content flex flex-col items-center justify-center">
+		<label for="my-drawer-2" class="btn btn-primary drawer-button lg:hidden">Open drawer</label>
 
 		<Map
 			accessToken={PUBLIC_MAPBOX_API_KEY}
-			center={coords}
+			center={coords ?? [-75.695, 45.424721]}
 			style="mapbox://styles/mapbox/outdoors-v11"
 			zoom={15}
 		>
-			<Marker
-				lat={coords[1]}
-				lng={coords[0]}
-				label="You are here"
-				color={0xff0000}
-				popupClassName="bg-red-500"
-			>
-				<svelte:fragment slot="popup">
-					hello buddy
-				</svelte:fragment>
-			</Marker>
+			{#if coords}
+				<Marker
+					lat={coords[1]}
+					lng={coords[0]}
+					label="You are here"
+					color={0xff0000}
+				>
+					<Circle class="text-2xl text-blue-500" />
+				</Marker>
+			{/if}
+
+			{#if $points.isSuccess}
+				{#each $points.data as point}
+					<Marker
+						lat={point.latitude}
+						lng={point.longitude}
+						label={point.name}
+						color={0x00ff00}
+					>
+						<Pin class="text-2xl text-red-400" />
+					</Marker>
+				{/each}
+			{/if}
 		</Map>
 	</div>
-{:else}
-	loading...
-{/if}
+
+	<div class="drawer-side">
+		<label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"></label>
+		<ul class="menu p-4 w-full lg:w-[33vw] min-h-full bg-base-200 text-base-content">
+			<div class="event-grid grid gap-4">
+				{#if $events.isError}
+					{$events.error.message}
+				{:else if $events.isLoading}
+					loading...
+				{:else if $events.isSuccess}
+					{#each $events.data as event}
+						<div class="bg-white p-4 rounded-lg shadow-md">
+							<h2 class="text-xl font-bold">{event.name}</h2>
+							<p>{event.description}</p>
+						</div>
+					{/each}
+				{/if}
+			</div>
+		</ul>
+	</div>
+</div>
 
 <style>
 	.event-grid {
