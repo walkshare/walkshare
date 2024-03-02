@@ -1,0 +1,1 @@
+ALTER TABLE "poi" ADD COLUMN "address" text NOT NULL;
