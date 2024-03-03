@@ -12,6 +12,7 @@
 	import Navbar from '$lib/components/Navbar.svelte';
 
 	import type { PageData } from './$types';
+	import { distance } from '$lib/util';
 
 	export let data: PageData;
 
@@ -23,15 +24,20 @@
 			coords = [position.coords.longitude, position.coords.latitude];
 
 			if (data.user) {
-				publisher.publish('location', JSON.stringify({
-					coords,
-					id: data.user.userId,
-				}));
+				publisher.publish(
+					'location',
+					JSON.stringify({
+						coords,
+						id: data.user.userId,
+					}),
+				);
 			}
 		});
 
 		subscriber.subscribe('location', (message) => {
-			const { coords, id } = JSON.parse(message.getBinaryAttachment() as string);
+			const { coords, id } = JSON.parse(
+				message.getBinaryAttachment() as string,
+			);
 			if (id === data.user?.userId) return;
 
 			users.set(id, coords);
@@ -42,36 +48,60 @@
 
 		subscriber.subscribe('join', () => {
 			if (data.user) {
-				publisher.publish('location', JSON.stringify({
-					coords,
-					id: data.user.userId,
-				}));
+				publisher.publish(
+					'location',
+					JSON.stringify({
+						coords,
+						id: data.user.userId,
+					}),
+				);
 			}
 		});
 
 		publisher.publish('join', '');
+
+		subscriber.subscribe('close', (message) => {
+			
+		})
 	});
 
 	const events = createQuery({
 		queryKey: ['events'],
-		queryFn: () => trpc.event.getAll.mutate({
-			query: '',
-			tags: [],
-			page: 1,
-			limit: 10,
-		}),
+		queryFn: () =>
+			trpc.event.getAll.mutate({
+				query: '',
+				tags: [],
+				page: 1,
+				limit: 10,
+			}),
 	});
 
 	const points = createQuery({
 		queryKey: ['points'],
-		queryFn: () => trpc.poi.getAll.mutate({
-			query: '',
-			tags: [],
-			lat: coords?.[1] ?? 0,
-			lng: coords?.[0] ?? 0,
-			distance: 0.2,
-		}),
+		queryFn: () =>
+			trpc.poi.getAll.mutate({
+				query: '',
+				tags: [],
+				lat: coords?.[1] ?? 0,
+				lng: coords?.[0] ?? 0,
+				distance: 0.2,
+			}),
 	});
+
+	$: if (data.user && $points.isSuccess && coords) {
+		for (const point of $points.data) {
+			if (distance(coords, [point.latitude, point.longitude]) < 5) {
+				publisher.publish(
+					'close',
+					JSON.stringify({
+						id: data.user.userId,
+						poi: point.name,
+						name: data.user.username,
+					}),
+				);
+			}
+		}
+	}
 </script>
 
 <div class="drawer lg:drawer-open">
