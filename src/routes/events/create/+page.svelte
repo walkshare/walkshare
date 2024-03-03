@@ -1,4 +1,6 @@
 <script lang="ts">
+	import 'flatpickr/dist/themes/dark.css';
+
 	import { TRPCClientError } from '@trpc/client';
 	import Flatpickr from 'svelte-flatpickr';
 
@@ -16,7 +18,6 @@
 		tags: [] as string[],
 		thumbnail: '',
 		startsAt: new Date(),
-		endsAt: new Date(),
 	};
 
 	let itinerary: Poi[] = [];
@@ -119,6 +120,16 @@
 			</button>
 
 			<div class="flex flex-col gap-2 flex-wrap">
+				<Flatpickr
+					options={{
+						mode: 'single',
+						dateFormat: 'l, F J Y h:i K',
+					}}
+					name="date"
+					bind:value={event.startsAt}
+					class="input rounded-xl border-none bg-base-200 p-4 cursor-pointer w-full"
+				/>
+
 				{#each event.tags as tag}
 					<div class="badge badge-neutral badge-lg">{tag}</div>
 				{/each}
@@ -126,15 +137,6 @@
 				<form on:submit|preventDefault={addTag}>
 					<input class="badge badge-neutral badge-lg" placeholder="Add tag..." bind:value={tag} />
 				</form>
-
-				<div class="flex flex-row gap-2">
-					<Flatpickr
-						options={{
-							mode: 'range',
-						}}
-						bind:value={range}
-					/>
-				</div>
 			</div>
 		</div>
 	</form>

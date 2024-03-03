@@ -5,9 +5,6 @@ settings:
   excludeLinksFromLockfile: false
 
 dependencies:
-  '@beyonk/svelte-datepicker':
-    specifier: ^13.0.4
-    version: 13.0.4
   '@beyonk/svelte-mapbox':
     specifier: ^9.1.1
     version: 9.1.1(svelte@4.2.12)
@@ -23,9 +20,6 @@ dependencies:
   axios:
     specifier: ^1.6.7
     version: 1.6.7
-  date-picker-svelte:
-    specifier: ^2.11.0
-    version: 2.11.0(svelte@4.2.12)
   dayjs:
     specifier: ^1.11.10
     version: 1.11.10
@@ -38,6 +32,9 @@ dependencies:
   eventemitter3:
     specifier: ^5.0.1
     version: 5.0.1
+  flatpickr:
+    specifier: ^4.6.13
+    version: 4.6.13
   lucia:
     specifier: ^2.7.7
     version: 2.7.7
@@ -211,10 +208,6 @@ packages:
     engines: {node: '>=6.9.0'}
     dependencies:
       regenerator-runtime: 0.14.1
-    dev: false
-
-  /@beyonk/svelte-datepicker@13.0.4:
-    resolution: {integrity: sha512-Q80+vdDSqDLVCzjOVLiIxuXV/oaw5cnw2Zkj6eWjuIGGHE7ASPQ714++Ut2S343H+m0Cuw3GYuGqkvpBA6s88w==}
     dev: false
 
   /@beyonk/svelte-mapbox@9.1.1(svelte@4.2.12):
@@ -2073,14 +2066,6 @@ packages:
     transitivePeerDependencies:
       - postcss
     dev: true
-
-  /date-picker-svelte@2.11.0(svelte@4.2.12):
-    resolution: {integrity: sha512-iaYxY2mZN6uJ1AidZUFy0MorGzdMUeaD5G8z6NIbg22GIn/9ZdnkonTY7I3+zrPp85eGZx/Ws9sCJVhMyV7sog==}
-    peerDependencies:
-      svelte: ^3.24.0 || ^4.0.0
-    dependencies:
-      svelte: 4.2.12
-    dev: false
 
   /dayjs@1.11.10:
     resolution: {integrity: sha512-vjAczensTgRcqDERK0SR2XMwsF/tSvnvlv6VcF2GIhg6Sx4yOIt/irsr1RDJsKiIyBzJDpCoXiWWq28MqH2cnQ==}

@@ -39,9 +39,6 @@
 		<p>Starts at:</p>
 		<p>{new Date($event.data.startsAt).toUTCString()}</p>
 
-		<p>Ends at:</p>
-		<p>{new Date($event.data.endsAt).toUTCString()}</p>
-
 		<p>Tags:</p>
 		{#each $event.data.tags as t}
 			{t}
