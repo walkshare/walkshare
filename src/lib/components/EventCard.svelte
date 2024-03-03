@@ -1,24 +1,26 @@
 <script lang="ts">
+	import Arrow from '~icons/ic/baseline-arrow-forward';
 	import { PUBLIC_BASE_URL } from '$env/static/public';
 	import type { EventWithItinerary } from '$lib/server/schema';
 
 	export let event: EventWithItinerary;
 </script>
 
-<div class="card w-full bg-base-100 shadow-xl">
+<a class="card w-full bg-base-100 shadow-xl" href="/events/{event.id}">
 	<figure class="relative">
-		<img src="{PUBLIC_BASE_URL}/event/{event.id}/thumbnail" alt={event.name} />
+		<div class="w-full h-48 bg-base-300">
+			<img src="{PUBLIC_BASE_URL}/events/{event.id}/thumbnail" alt={event.name} />
+		</div>
 
-		<div class="absolute top-0 left-0 flex flex-row flex-wrap gap-2">
-			{#each event.tags as tag}
-				<span class="badge badge-secondary">{tag}</span>
+		<div class="absolute top-2 left-2 flex flex-row flex-wrap gap-2">
+			{#each event.tags.slice(0, 3) as tag}
+				<span class="badge badge-secondary bg-white border-white">{tag}</span>
 			{/each}
 		</div>
 	</figure>
 
-	<div class="card-body prose max-w-full">
+	<div class="card-body p-2 prose max-w-full">
 		<h2 class="card-title">{event.name}</h2>
-		<h3>{event.name}</h3>
 
 		<div class="line-clamp-5 prose max-w-full">
 			<!-- SAFETY: the description is sanitized server-side -->
@@ -27,7 +29,7 @@
 		</div>
 
 		<div class="card-actions justify-end">
-			<button class="btn btn-primary ml-auto">See more</button>
+			<button class="btn btn-sm btn-primary ml-auto">See more <Arrow /></button>
 		</div>
 	</div>
-</div>
+</a>
