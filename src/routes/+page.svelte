@@ -128,55 +128,57 @@
 			Open drawer
 		</label>
 
-		<Mapbox
-			accessToken={PUBLIC_MAPBOX_API_KEY}
-			center={coords ?? [-75.695, 45.424721]}
-			style="mapbox://styles/mapbox/outdoors-v11"
-			zoom={15}
-		>
-			{#if coords}
-				<Marker
-					lat={coords[1]}
-					lng={coords[0]}
-					label="You are here"
-					color={0xff0000}
-				>
-					<Circle class="text-2xl text-blue-500" />
-				</Marker>
-			{/if}
-
-			{#if $points.isSuccess}
-				{#each $points.data as point}
-					<Marker
-						lat={point.latitude}
-						lng={point.longitude}
-						label={point.name}
-						color={0x00ff00}
-						popupClassName=""
-					>
-						<Pin class="text-2xl text-red-400" />
-
-						<a slot="popup" href="/pois/{point.id}">
-							<h1 class="text-lg font-bold">{point.name}</h1>
-							<p class="text-md line-clamp-4">{point.description}</p>
-						</a>
-					</Marker>
-				{/each}
-			{/if}
-
-			{#each Array.from(users.entries()) as [id, coords]}
-				{#if coords?.[0] && coords?.[1]}
+		<div class="w-full h-full">
+			<Mapbox
+				accessToken={PUBLIC_MAPBOX_API_KEY}
+				center={coords ?? [-75.695, 45.424721]}
+				style="mapbox://styles/mapbox/outdoors-v11"
+				zoom={15}
+			>
+				{#if coords}
 					<Marker
 						lat={coords[1]}
 						lng={coords[0]}
-						label="Another user ({id})"
-						color={0x0000ff}
+						label="You are here"
+						color={0xff0000}
 					>
-						<Circle class="text-2xl text-green-500" />
+						<Circle class="text-2xl text-blue-500" />
 					</Marker>
 				{/if}
-			{/each}
-		</Mapbox>
+
+				{#if $points.isSuccess}
+					{#each $points.data as point}
+						<Marker
+							lat={point.latitude}
+							lng={point.longitude}
+							label={point.name}
+							color={0x00ff00}
+							popupClassName=""
+						>
+							<Pin class="text-2xl text-red-400" />
+
+							<a slot="popup" href="/pois/{point.id}">
+								<h1 class="text-lg font-bold">{point.name}</h1>
+								<p class="text-md line-clamp-4">{point.description}</p>
+							</a>
+						</Marker>
+					{/each}
+				{/if}
+
+				{#each Array.from(users.entries()) as [id, coords]}
+					{#if coords?.[0] && coords?.[1]}
+						<Marker
+							lat={coords[1]}
+							lng={coords[0]}
+							label="Another user ({id})"
+							color={0x0000ff}
+						>
+							<Circle class="text-2xl text-green-500" />
+						</Marker>
+					{/if}
+				{/each}
+			</Mapbox>
+		</div>
 	</div>
 
 	<div class="drawer-side">
