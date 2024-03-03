@@ -14,10 +14,16 @@
 	import type { PageData } from './$types';
 	import { distance } from '$lib/util';
 
+	import toast from 'svelte-french-toast';
+
 	export let data: PageData;
 
 	let coords: [number, number] | undefined = undefined;
 	let users = new Map<string, [number, number]>();
+
+	const NOTIFICATION_DISTANCE_THRESHOLD = 4200;
+
+	const notifiedPois: Set<string> = new Set();
 
 	onMount(() => {
 		navigator.geolocation.watchPosition((position) => {
@@ -61,8 +67,14 @@
 		publisher.publish('join', '');
 
 		subscriber.subscribe('close', (message) => {
-			
-		})
+			const { name, poi, id } = JSON.parse(
+				message.getBinaryAttachment() as string,
+			);
+
+			if (id === data.user?.userId) return;
+
+			toast.success(`${name} has arrived at ${poi}!`);
+		});
 	});
 
 	const events = createQuery({
@@ -90,7 +102,14 @@
 
 	$: if (data.user && $points.isSuccess && coords) {
 		for (const point of $points.data) {
-			if (distance(coords, [point.latitude, point.longitude]) < 5) {
+			if (
+				distance(coords, [point.latitude, point.longitude]) <
+				NOTIFICATION_DISTANCE_THRESHOLD
+			) {
+				if (notifiedPois.has(point.name)) continue;
+
+				notifiedPois.add(point.name);
+
 				publisher.publish(
 					'close',
 					JSON.stringify({
