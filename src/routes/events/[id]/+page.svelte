@@ -21,7 +21,7 @@
 
 	function toggle() {
 		joined = !joined;
-	
+
 		trpc.event[joined ? 'join' : 'leave'].mutate({ id: $page.params.id });
 	}
 
@@ -108,25 +108,34 @@
 		loading...
 	{:else if $event.isSuccess}
 		<div class="max-w-3xl flex flex-col prose gap-8">
-			<img alt={$event.data.name} src="/events/{$event.data.id}/thumbnail" class="rounded-2xl m-0 p-0" />
+			<img
+				alt={$event.data.name}
+				src="/events/{$event.data.id}/thumbnail"
+				class="rounded-2xl m-0 p-0"
+			/>
 
 			<div class="grid md:grid-cols-3">
 				<div class="flex flex-row gap-2 flex-wrap relative md:col-span-2">
 					{#each $event.data.tags as tag}
-					<span class="badge badge-neutral badge-lg">{capitalize(tag)}</span>
+						<span class="badge badge-neutral badge-lg">{capitalize(tag)}</span>
 					{/each}
 				</div>
 
-				<div class="flex flex-col gap-2 place-items-end">
+				<div class="flex flex-col place-items-end">
 					<p class="p-0 m-0">{new Date($event.data.startsAt).toUTCString()}</p>
-
-					<button class="btn btn-primary w-fit" on:click={toggle}>
-						{#if joined}
-							Leave
-						{:else}
-							Join
-						{/if}
-					</button>
+					<div class="flex gap-2 place-items-center">
+						<p>
+							{$event.data.count}
+							{$event.data.count === 1 ? 'person' : 'people'} attending.
+						</p>
+						<button class="btn btn-primary w-fit" on:click={toggle}>
+							{#if joined}
+								Leave
+							{:else}
+								Join
+							{/if}
+						</button>
+					</div>
 				</div>
 			</div>
 
