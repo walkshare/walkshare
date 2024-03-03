@@ -12,19 +12,20 @@ const openai = new OpenAi({
 
 export async function createItinerary(lat: number, long: number) {
 
-	const distance = 0.2;
+	const distance = 1;
 
 	const filters: SQL[] = [];
 
 	filters.push(or(gte(poi.latitude, lat - distance), lte(poi.latitude, long + distance))!);
-	filters.push(or(gte(poi.longitude, lat - distance), lte(poi.longitude, long - distance))!);
+	filters.push(or(gte(poi.longitude, lat - distance), lte(poi.longitude, long + distance))!);
 
 	const input = `You are tasked with creating an itinerary of points of interest to visit, given latitude and longitude. 
-    You must pick 2-5 points of interest for a user to visit based off their position. Return only the ids of each poi that you have chosen, seperated by a new line.`;
+    You must pick 4-8 points of interest for a user to visit based off their position. Return ONLY the id of each location that you have chosen, seperated by new lines.`;
 
 	const data = await db.query.poi.findMany({
 		where: and(...filters),
-	})
+		limit: 10,
+	});
 
 	const response = await openai.chat.completions.create({
 		messages: [
@@ -34,7 +35,7 @@ export async function createItinerary(lat: number, long: number) {
 			},
 			{
 				role: 'user',
-				content: data.map((poi) => `${poi.id}, longitude: ${poi.longitude}, latitude: ${poi.latitude}`).join('\n'),
+				content: data.map((poi) => `name: ${poi.name} - id: ${poi.id}`).join('\n'),
 			},
 		],
 		model: 'gpt-3.5-turbo',

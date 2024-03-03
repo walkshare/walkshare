@@ -1,6 +1,8 @@
 <script lang="ts">
-	import type { ActionData } from './$types';
+	import Google from '~icons/logos/google-icon';
 
+	import type { ActionData } from './$types';
+	
 	export let form: ActionData;
 
 	let showPassword = false;
@@ -22,6 +24,21 @@
 		{#if form?.message}
 			<div class="alert alert-error">{form.message}</div>
 		{/if}
+
+		<a
+			class="btn btn-md dark:btn-neutral w-full gap-4"
+			href="/login/google"
+		>
+			<Google class="h-6 w-6" />
+			<span class="hidden md:block">
+				Continue with Google
+			</span>
+		</a>
+
+		<div class="divider text-xs uppercase">
+			or
+		</div>
+
 		<label class="label" for="username">
 			<span class="label-text"> Username </span>
 		</label>

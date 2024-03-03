@@ -12,7 +12,7 @@
 	});
 </script>
 
-<a class="absolute top-4 left-4" href="/">
+<a class="absolute top-4 left-4 btn btn-ghost btn-square rounded-full" href="/">
 	<Back class="text-3xl" />
 </a>
 

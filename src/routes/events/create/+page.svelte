@@ -76,8 +76,8 @@
 	let tag: string;
 </script>
 
-<div class="flex justify-center pt-32">
-	<form class="max-w-4xl w-full grid md:grid-cols-2 gap-x-4 gap-y-16" on:submit|preventDefault={submit}>
+<form class="grid justify-center pt-32" on:submit|preventDefault={submit}>
+	<div class="max-w-4xl w-full grid md:grid-cols-2 gap-x-4 gap-y-16">
 		<div class="flex flex-col gap-4 prose">
 			<input bind:value={event.name} class="input rounded-xl border-none bg-base-200 p-4" placeholder="Add name..." />
 			<textarea bind:value={event.description} class="textarea rounded-xl bg-base-200 p-4 min-h-96" placeholder="Add description..." />
@@ -128,7 +128,7 @@
 				/>
 			</button>
 
-			<div class="flex flex-col gap-2 flex-wrap">
+			<div class="flex flex-col gap-2 flex-wrap max-w-full">
 				<Flatpickr
 					options={{
 						mode: 'single',
@@ -139,29 +139,31 @@
 					class="input rounded-xl border-none bg-base-200 p-4 cursor-pointer w-full"
 				/>
 
-				{#each event.tags as tag}
-					<div class="badge badge-neutral badge-lg">{tag}</div>
-				{/each}
+				<div class="flex flex-row gap-2 flex-wrap flex-shrink">
+					{#each event.tags as tag}
+						<div class="badge badge-neutral badge-lg">{tag}</div>
+					{/each}
 
-				<form on:submit|preventDefault={addTag}>
-					<input class="badge badge-neutral badge-lg" placeholder="Add tag..." bind:value={tag} />
-				</form>
+					<form on:submit|preventDefault={addTag}>
+						<input class="badge badge-neutral badge-lg" placeholder="Add tag..." bind:value={tag} />
+					</form>
+				</div>
 			</div>
 		</div>
 
-		<div class="flex flex-col gap-4 prose">
+		<div class="flex flex-col gap-4 prose max-w-full" class:col-span-2={itinerary.length > 0}>
 			<h2>Itinerary</h2>
 
 			{#if itinerary.length}
-				<div class="itinerarygrid gap-2 lg:grid-cols-3 col-span-2">
+				<div class="grid gap-2 lg:grid-cols-3">
 					{#each itinerary as poi}
 						<PoiCard {poi} background />
 					{/each}
 				</div>
 			{:else}
-				<div class="flex flex-row flex-wrap gap-2 col-span-2">
+				<div class="flex flex-row flex-wrap gap-2">
 					<span>You don't have an itinerary yet.</span>
-					<button class="btn btn-accent btn-sm w-fit" on:click={createItinerary}>
+					<button class="btn btn-accent btn-sm w-fit" on:click={createItinerary} type="button">
 						{#if loadingItinerary}
 							<span class="loading loading-dots loading-sm"></span>
 						{/if}
@@ -171,11 +173,11 @@
 				</div>
 			{/if}
 		</div>
+	</div>
 
-		<div class="flex flex-col gap-4 prose">
-			<button class="btn btn-primary mt-auto place-self-end">
-				Create <Arrow />
-			</button>
-		</div>
-	</form>
-</div>
+	<div class="max-w-4xl grid mt-8 mb-8">
+		<button class="btn btn-primary btn-lg mt-auto place-self-end">
+			Create <Arrow />
+		</button>
+	</div>
+</form>

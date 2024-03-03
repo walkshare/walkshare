@@ -11,6 +11,9 @@ dependencies:
   '@lucia-auth/adapter-postgresql':
     specifier: ^2.0.2
     version: 2.0.2(lucia@2.7.7)(pg@8.11.3)
+  '@lucia-auth/oauth':
+    specifier: ^3.5.3
+    version: 3.5.3(lucia@2.7.7)
   '@tanstack/svelte-query':
     specifier: ^5.24.1
     version: 5.24.1(svelte@4.2.12)
@@ -82,6 +85,9 @@ devDependencies:
   '@iconify-json/ic':
     specifier: ^1.1.17
     version: 1.1.17
+  '@iconify-json/logos':
+    specifier: ^1.1.42
+    version: 1.1.42
   '@iconify-json/map':
     specifier: ^1.1.9
     version: 1.1.9
@@ -712,6 +718,12 @@ packages:
       '@iconify/types': 2.0.0
     dev: true
 
+  /@iconify-json/logos@1.1.42:
+    resolution: {integrity: sha512-/f+frtPm3m3Z30oy8Pk+QqRDkbmAiIaWGPl5CmsCXm15MVfvw9a/V/gD7WzdyuSGAZcFuQaqbHXj92y/n+2ifg==}
+    dependencies:
+      '@iconify/types': 2.0.0
+    dev: true
+
   /@iconify-json/map@1.1.9:
     resolution: {integrity: sha512-xdpJ+jxhydRVLD3HNYXh0atTotJIJK3EsHFuWTz2Necu5tR+NCx54GyTYM0YABE+aDkncQIvrlLJlC+XShlsRQ==}
     dependencies:
@@ -975,6 +987,14 @@ packages:
     dependencies:
       lucia: 2.7.7
       pg: 8.11.3
+    dev: false
+
+  /@lucia-auth/oauth@3.5.3(lucia@2.7.7):
+    resolution: {integrity: sha512-3blBldenf2zXsSJTZUwzB+NxI+0KJljfMHT0WR7hyLNwi4Ijss7F2cQqk2xW1lGH3lzdmsV93ZsY9Yv8ekBRUw==}
+    peerDependencies:
+      lucia: ^2.0.0
+    dependencies:
+      lucia: 2.7.7
     dev: false
 
   /@nodelib/fs.scandir@2.1.5:

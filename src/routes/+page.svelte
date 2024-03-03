@@ -4,6 +4,8 @@
 	import { onMount } from 'svelte';
 	import toast from 'svelte-french-toast';
 
+	import Login from '~icons/ic/baseline-login';
+	import Logout from '~icons/ic/baseline-logout';
 	import Plus from '~icons/ic/baseline-plus';
 	import Circle from '~icons/map/circle';
 	import Pin from '~icons/map/postal-code';
@@ -131,7 +133,6 @@
 			center={coords ?? [-75.695, 45.424721]}
 			style="mapbox://styles/mapbox/outdoors-v11"
 			zoom={15}
-			resize={() => console.log('resizing')}
 		>
 			{#if coords}
 				<Marker
@@ -181,6 +182,28 @@
 		<ul
 			class="menu p-0 w-full lg:w-[33vw] min-h-full bg-base-200 text-base-content"
 		>
+			<div class="flex flex-row place-content-between">
+				<a
+					class="btn btn-secondary m-4"
+					href={data.user ? '/logout' : '/login'}
+				>
+					{#if data.user}
+						<Logout />
+						Logout
+					{:else}
+						<Login />
+						Login
+					{/if}
+				</a>
+
+				<a
+					class="btn btn-primary m-4"
+					href="/events/create"
+				>
+					<Plus /> Create event
+				</a>
+			</div>
+
 			<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-2">
 				{#if $events.isError}
 					{$events.error.message}
@@ -193,13 +216,6 @@
 				{/if}
 			</div>
 		</ul>
-
-		<a
-			class="btn btn-primary m-4 absolute bottom-2 right-2"
-			href="/events/create"
-		>
-			<Plus /> Create event
-		</a>
 	</div>
 </div>
 
