@@ -1,12 +1,12 @@
 import { TRPCError } from '@trpc/server';
-import { and, arrayOverlaps, asc, eq, exists, inArray, SQL,sql } from 'drizzle-orm';
+import { and, arrayOverlaps, asc, eq, exists, SQL,sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { procedure, router } from '$lib/server/trpc';
 import { protectedProcedure } from '$lib/server/trpc';
 
 import { db } from '../db';
-import { attendance, attendance, event, itinerary } from '../db/schema';
+import { attendance, event, itinerary } from '../db/schema';
 import { Event, EventWithItinerary } from '../schema';
 import { convertMarkdown, createEventEmbedding, embedText, maxInnerProduct } from '../util';
 

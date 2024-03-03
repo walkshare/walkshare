@@ -9,6 +9,8 @@
 	</div>
 
 	<div class="gap-x-10 pr-4">
+		<label for="sidebar" aria-label="close sidebar" class="lg:hidden">close</label>
+
 		<div class="dropdown dropdown-bottom dropdown-end z-20">
 			<div
 				tabindex="0"

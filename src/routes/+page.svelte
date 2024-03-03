@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Map, Marker } from '@beyonk/svelte-mapbox';
+	import { Map as Mapbox, Marker } from '@beyonk/svelte-mapbox';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';
 
@@ -7,15 +7,37 @@
 	import Circle from '~icons/map/circle';
 	import Pin from '~icons/map/postal-code';
 	import { PUBLIC_MAPBOX_API_KEY } from '$env/static/public';
-	import { trpc } from '$lib/client';
+	import { publisher, subscriber, trpc } from '$lib/client';
 	import EventCard from '$lib/components/EventCard.svelte';
 	import Navbar from '$lib/components/Navbar.svelte';
 
+	import type { PageData } from './$types';
+
+	export let data: PageData;
+
 	let coords: [number, number] | undefined = undefined;
+	let users = new Map<string, [number, number]>();
 
 	onMount(() => {
 		navigator.geolocation.watchPosition((position) => {
 			coords = [position.coords.longitude, position.coords.latitude];
+
+			if (data.user) {
+				publisher.publish('location', JSON.stringify({
+					coords,
+					id: data.user.userId,
+				}));
+			}
+		});
+
+		subscriber.subscribe('location', (message) => {
+			const { coords, id } = JSON.parse(message.getBinaryAttachment() as string);
+			if (id === data.user?.userId) return;
+
+			users.set(id, coords);
+			users = users;
+
+			console.log('received', coords, 'from', id);
 		});
 	});
 
@@ -42,13 +64,13 @@
 </script>
 
 <div class="drawer lg:drawer-open">
-	<input id="my-drawer-2" type="checkbox" class="drawer-toggle" />
+	<input id="sidebar" type="checkbox" class="drawer-toggle" />
 	<div class="drawer-content flex flex-col items-center justify-center">
-		<label for="my-drawer-2" class="btn btn-primary drawer-button lg:hidden"
-			>Open drawer</label
-		>
+		<label for="sidebar" class="btn btn-primary drawer-button lg:hidden">
+			Open drawer
+		</label>
 
-		<Map
+		<Mapbox
 			accessToken={PUBLIC_MAPBOX_API_KEY}
 			center={coords ?? [-75.695, 45.424721]}
 			style="mapbox://styles/mapbox/outdoors-v11"
@@ -77,18 +99,28 @@
 					</Marker>
 				{/each}
 			{/if}
-		</Map>
+
+			{#each Array.from(users.entries()) as [id, coords]}
+				<Marker
+					lat={coords[1]}
+					lng={coords[0]}
+					label="Another user ({id})"
+					color={0x0000ff}
+				>
+					<Circle class="text-2xl text-green-500" />
+				</Marker>
+			{/each}
+		</Mapbox>
 	</div>
 
 	<div class="drawer-side">
-		<label for="my-drawer-2" aria-label="close sidebar" class="drawer-overlay"
-		></label>
+		<label for="sidebar" aria-label="close sidebar" class="drawer-overlay" />
 		<ul
 			class="menu p-0 w-full lg:w-[33vw] min-h-full bg-base-200 text-base-content"
 		>
 			<Navbar />
 
-			<div class="event-grid grid gap-4">
+			<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-2">
 				{#if $events.isError}
 					{$events.error.message}
 				{:else if $events.isLoading}
@@ -99,19 +131,13 @@
 					{/each}
 				{/if}
 			</div>
-
-			<a
-				class="btn btn-primary m-4 mt-auto place-self-end"
-				href="/events/create"
-			>
-				<Plus /> Create event
-			</a>
 		</ul>
+
+		<a
+			class="btn btn-primary m-4 absolute bottom-2 right-2"
+			href="/events/create"
+		>
+			<Plus /> Create event
+		</a>
 	</div>
 </div>
-
-<style>
-	.event-grid {
-		grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
-	}
-</style>

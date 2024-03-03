@@ -94,9 +94,9 @@
 			/>
 		</button>
 
-		<input class="input" placeholder="Add name..." />
+		<input bind:value={event.name} class="input" placeholder="Add name..." />
 
-		<textarea class="textarea" placeholder="Add description..."></textarea>
+		<textarea bind:value={event.description} class="textarea" placeholder="Add description..."></textarea>
 
 		{#each event.tags as t}
 			{t}

@@ -3,8 +3,6 @@
 
 	import { QueryClient, QueryClientProvider } from '@tanstack/svelte-query';
 
-	import Navbar from '$lib/components/Navbar.svelte';
-
 	const queryClient = new QueryClient();
 </script>
 
