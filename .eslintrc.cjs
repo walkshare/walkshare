@@ -34,5 +34,6 @@ module.exports = {
 		"simple-import-sort/imports": "error",
 		"simple-import-sort/exports": "error",
 		'object-property-newline': ['error', { allowAllPropertiesOnSameLine: false }],
+		'svelte/valid-compile': 'off',
 	}
 };

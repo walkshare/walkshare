@@ -4,7 +4,10 @@
 	import type { EventWithItinerary } from '$lib/server/schema';
 	import { capitalize } from '$lib/util';
 
-	export let event: EventWithItinerary;
+	export let event: Omit<EventWithItinerary, 'startsAt' | 'createdAt'> & {
+		startsAt: string;
+		createdAt?: string;
+	};
 </script>
 
 <a
