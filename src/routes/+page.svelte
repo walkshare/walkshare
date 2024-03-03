@@ -70,7 +70,7 @@
 				message.getBinaryAttachment() as string,
 			);
 
-			//if (id === data.user?.userId) return;
+			if (id === data.user?.userId) return;
 
 			toast.success(`${name} has arrived at ${poi}!`);
 		});
@@ -101,9 +101,6 @@
 
 	$: if (data.user && $points.isSuccess && coords) {
 		for (const point of $points.data) {
-			console.log(
-				distance(coords[0], coords[1], point.latitude, point.longitude),
-			);
 			if (
 				distance(coords[0], coords[1], point.latitude, point.longitude) <
 				NOTIFICATION_DISTANCE_THRESHOLD
