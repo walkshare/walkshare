@@ -41,7 +41,7 @@ export const app = router({
 			// @ts-expect-error - we remove this
 			input.itinerary = undefined;
 
-			input.thumbnail = (await sharp(
+			input.thumbnail = input.thumbnail && (await sharp(
 				Buffer.from(input.thumbnail.slice(input.thumbnail.indexOf(',') + 1), 'base64'),
 			)
 				.resize(1920, 1080, {
