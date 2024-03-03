@@ -199,8 +199,8 @@ export const app = router({
 			joined: z.boolean(),
 			count: z.number(),
 		}))
+		// @ts-expect-error - expected
 		.query(async ({ input, ctx }) => {
-
 			const at = db.select({ value: count() }).from(attendance).where(eq(attendance.eventId, input.id));
 
 			const data = await db.query.event.findFirst({
@@ -254,6 +254,7 @@ export const app = router({
 			query: z.string().max(128),
 			tags: z.string().array(),
 		})).output(EventWithItinerary.array())
+		// @ts-expect-error - expected
 		.mutation(async ({ input }) => {
 			const filters: SQL[] = [];
 			const orders: SQL<number>[] = [];
