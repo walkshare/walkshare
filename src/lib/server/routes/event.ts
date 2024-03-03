@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server';
-import { and, arrayOverlaps, asc, eq, exists, SQL, sql } from 'drizzle-orm';
+import { and, arrayOverlaps, asc, count, eq, exists, SQL, sql } from 'drizzle-orm';
 import sharp from 'sharp';
 import { z } from 'zod';
 
@@ -195,8 +195,12 @@ export const app = router({
 		.input(z.object({
 			id: z.string().uuid(),
 		}))
-		.output(EventWithItinerary.extend({ joined: z.boolean() }))
+		.output(EventWithItinerary.extend({ joined: z.boolean(),
+			count: z.number()}))
 		.query(async ({ input, ctx }) => {
+
+			const at = db.select({value: count()}).from(attendance).where(eq(attendance.eventId, input.id));
+			
 			const data = await db.query.event.findFirst({
 				where: eq(event.id, input.id),
 				with: {
@@ -219,9 +223,11 @@ export const app = router({
 							eq(attendance.eventId, input.id),
 						))) as SQL<boolean>).as('j')
 						: sql<boolean>`false`.as('j'),
+					count: sql<number>`${at}::integer`.as('c'),
 				},
 			});
 
+			console.log(data);
 			if (!data) {
 				throw new TRPCError({
 					message: 'event_not_found',
