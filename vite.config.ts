@@ -19,4 +19,11 @@ export default defineConfig({
 	ssr: {
 		noExternal: ['dayjs'],
 	},
+	build: {
+		rollupOptions: {
+			external: [
+				'sharp',
+			],
+		},
+	},
 });
