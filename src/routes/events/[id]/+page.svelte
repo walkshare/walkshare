@@ -12,16 +12,10 @@
 
 	$: joined = $event.isSuccess && $event.data.joined;
 
-	function joinEvent() {
-		trpc.event.join.mutate({ id: $page.params.id });
-
-		joined = true;
-	}
-
-	function leaveEvent() {
-		trpc.event.leave.mutate({ id: $page.params.id });
-
-		joined = false;
+	function toggle() {
+		joined = !joined;
+	
+		trpc.event[joined ? 'join' : 'leave'].mutate({ id: $page.params.id });
 	}
 </script>
 
@@ -31,18 +25,30 @@
 	{:else if $event.isLoading}
 		loading...
 	{:else if $event.isSuccess}
-		<div class="max-w-3xl p-4 flex flex-col gap-8">
-			<img alt={$event.data.name} src="/events/{$event.data.id}/thumbnail" class="rounded-2xl" />
+		<div class="max-w-3xl flex flex-col prose gap-8">
+			<img alt={$event.data.name} src="/events/{$event.data.id}/thumbnail" class="rounded-2xl m-0 p-0" />
 
-			<div class="flex flex-row gap-2 flex-wrap relative">
-				{#each $event.data.tags as tag}
-					<span class="badge badge-neutral badge-lg">{tag}</span>
-				{/each}
+			<div class="grid md:grid-cols-3">
+				<div class="flex flex-row gap-2 flex-wrap relative md:col-span-2">
+					{#each $event.data.tags as tag}
+						<span class="badge badge-neutral badge-lg">{tag}</span>
+					{/each}
+				</div>
 
-				<p class="absolute right-0">{new Date($event.data.startsAt).toUTCString()}</p>
+				<div class="flex flex-col gap-2 place-items-end">
+					<p class="p-0 m-0">{new Date($event.data.startsAt).toUTCString()}</p>
+
+					<button class="btn btn-primary w-fit" on:click={toggle}>
+						{#if joined}
+							Leave
+						{:else}
+							Join
+						{/if}
+					</button>
+				</div>
 			</div>
 
-			<h1 class="text-xl font-bold">{$event.data.name}</h1>
+			<h1 class="m-0 p-0">{$event.data.name}</h1>
 
 			<div class="prose">
 				<!-- SAFETY: the description is sanitized server-side -->
@@ -50,15 +56,11 @@
 				{@html $event.data.description}
 			</div>
 
-			{#if joined}
-				<button class="btn" on:click={leaveEvent}> Leave </button>
-			{:else}
-				<button class="btn" on:click={joinEvent}> Join </button>
-			{/if}
-
-			{#each $event.data.itinerary as i}
-				<PoiCard poi={i.poi} />
-			{/each}
+			<div class="grid md:grid-cols-2 gap-4">
+				{#each $event.data.itinerary as i}
+					<PoiCard poi={i.poi} background />
+				{/each}
+			</div>
 		</div>
 	{/if}
 </div>
