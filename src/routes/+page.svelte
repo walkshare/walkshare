@@ -20,6 +20,7 @@
 
 	let coords: [number, number] | undefined = undefined;
 	let users = new Map<string, [number, number]>();
+	let mapbox: Mapbox;
 
 	const NOTIFICATION_DISTANCE_THRESHOLD = 15700;
 
@@ -73,6 +74,8 @@
 
 			toast.success(`${name} has arrived at ${poi}!`);
 		});
+
+		mapbox.resize();
 	});
 
 	const events = createQuery({
@@ -134,6 +137,7 @@
 				center={coords ?? [-75.695, 45.424721]}
 				style="mapbox://styles/mapbox/outdoors-v11"
 				zoom={15}
+				bind:this={mapbox}
 			>
 				{#if coords}
 					<Marker
