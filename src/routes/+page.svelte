@@ -2,6 +2,7 @@
 	import { Map as Mapbox, Marker } from '@beyonk/svelte-mapbox';
 	import { createQuery } from '@tanstack/svelte-query';
 	import { onMount } from 'svelte';
+	import toast from 'svelte-french-toast';
 
 	import Plus from '~icons/ic/baseline-plus';
 	import Circle from '~icons/map/circle';
@@ -9,11 +10,9 @@
 	import { PUBLIC_MAPBOX_API_KEY } from '$env/static/public';
 	import { publisher, subscriber, trpc } from '$lib/client';
 	import EventCard from '$lib/components/EventCard.svelte';
-
-	import type { PageData } from './$types';
 	import { distance } from '$lib/util';
 
-	import toast from 'svelte-french-toast';
+	import type { PageData } from './$types';
 
 	export let data: PageData;
 
@@ -47,8 +46,6 @@
 
 			users.set(id, coords);
 			users = users;
-
-			console.log('received', coords, 'from', id);
 		});
 
 		subscriber.subscribe('join', () => {
@@ -134,6 +131,7 @@
 			center={coords ?? [-75.695, 45.424721]}
 			style="mapbox://styles/mapbox/outdoors-v11"
 			zoom={15}
+			resize={() => console.log('resizing')}
 		>
 			{#if coords}
 				<Marker
@@ -153,8 +151,20 @@
 						lng={point.longitude}
 						label={point.name}
 						color={0x00ff00}
+						popupClassName=""
 					>
 						<Pin class="text-2xl text-red-400" />
+
+						<div slot="popup" class="card bg-base-200 card-side p-2">
+							<div class="card-body">
+								<h1 class="text-lg font-bold">{point.name}</h1>
+								<p class="text-md line-clamp-4">{point.description}</p>
+							</div>
+
+							<figure>
+								<img src="/pois/{point.id}/thumbnail" alt={point.name} />
+							</figure>
+						</div>
 					</Marker>
 				{/each}
 			{/if}
@@ -198,3 +208,17 @@
 		</a>
 	</div>
 </div>
+
+<style>
+	:global(.mapboxgl-popup-content) {
+		background-color: transparent !important;
+		display: block !important;
+	}
+
+	:global(.mapboxgl-popup-tip) {
+		border-top-color: transparent !important;
+		border-bottom-color: transparent !important;
+		border-left-color: transparent !important;
+		border-right-color: transparent !important;
+	}
+</style>
