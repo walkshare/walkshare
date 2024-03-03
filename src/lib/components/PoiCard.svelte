@@ -7,7 +7,7 @@
 
 <div class="card w-full bg-base-100 shadow-xl">
 	<figure class="relative">
-		<img src="{PUBLIC_BASE_URL}/event/{poi.id}/thumbnail" alt={poi.name} />
+		<img src="{PUBLIC_BASE_URL}/events/{poi.id}/thumbnail" alt={poi.name} />
 
 		<div class="absolute top-0 left-0 flex flex-row flex-wrap gap-2">
 			{#each poi.tags as tag}
