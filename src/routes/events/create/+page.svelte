@@ -97,6 +97,7 @@
 				on:dragleave|preventDefault={() => {
 					hovering = false;
 				}}
+				on:dragover|preventDefault={() => {}}
 				on:drop|preventDefault={(e) => {
 					if (e.dataTransfer) files = e.dataTransfer.files;
 					hovering = false;
