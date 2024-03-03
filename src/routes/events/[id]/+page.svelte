@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { createQuery } from '@tanstack/svelte-query';
+
 	import { page } from '$app/stores';
 	import { trpc } from '$lib/client';
-	import { createQuery } from '@tanstack/svelte-query';
 	import PoiCard from '$lib/components/PoiCard.svelte';
 
 	$: event = createQuery({

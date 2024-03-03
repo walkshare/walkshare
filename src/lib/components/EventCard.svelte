@@ -7,9 +7,9 @@
 	export let event: EventWithItinerary;
 </script>
 
-<a class="card w-full" href="/events/{event.id}">
+<a class="card w-full hover:bg-base-100 p-2 duration-200 transition-all" href="/events/{event.id}">
 	<figure class="relative">
-		<div class="w-full h-48 bg-base-300 rounded-xl ">
+		<div class="w-full h-32 bg-base-300 rounded-xl overflow-hidden">
 			<img src="{PUBLIC_BASE_URL}/events/{event.id}/thumbnail" alt={event.name} />
 		</div>
 
@@ -20,7 +20,7 @@
 		</div>
 	</figure>
 
-	<div class="card-body p-2 prose max-w-full">
+	<div class="card-body p-0 pl-2 pt-2 prose max-w-full">
 		<h2 class="card-title">{event.name}</h2>
 
 		<div class="line-clamp-5 prose max-w-full">

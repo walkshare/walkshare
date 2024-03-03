@@ -39,6 +39,17 @@
 
 			console.log('received', coords, 'from', id);
 		});
+
+		subscriber.subscribe('join', () => {
+			if (data.user) {
+				publisher.publish('location', JSON.stringify({
+					coords,
+					id: data.user.userId,
+				}));
+			}
+		});
+
+		publisher.publish('join', '');
 	});
 
 	const events = createQuery({
