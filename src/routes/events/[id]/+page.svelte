@@ -9,6 +9,20 @@
 		queryKey: ['event'],
 		queryFn: () => trpc.event.getOne.query({ id: $page.params.id }),
 	});
+
+	$: joined = $event.isSuccess && $event.data.joined;
+
+	function joinEvent() {
+		trpc.event.join.mutate({ id: $page.params.id });
+
+		joined = true;
+	}
+
+	function leaveEvent() {
+		trpc.event.leave.mutate({ id: $page.params.id });
+
+		joined = false;
+	}
 </script>
 
 {#if $event.isError}
@@ -32,6 +46,12 @@
 		{#each $event.data.tags as t}
 			{t}
 		{/each}
+
+		{#if joined}
+			<button class="btn" on:click={leaveEvent}> Leave </button>
+		{:else}
+			<button class="btn" on:click={joinEvent}> Join </button>
+		{/if}
 
 		{#each $event.data.itinerary as i}
 			<PoiCard poi={i.poi} />
