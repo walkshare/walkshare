@@ -9,7 +9,6 @@
 	import { PUBLIC_MAPBOX_API_KEY } from '$env/static/public';
 	import { publisher, subscriber, trpc } from '$lib/client';
 	import EventCard from '$lib/components/EventCard.svelte';
-	import Navbar from '$lib/components/Navbar.svelte';
 
 	import type { PageData } from './$types';
 	import { distance } from '$lib/util';
@@ -178,8 +177,6 @@
 		<ul
 			class="menu p-0 w-full lg:w-[33vw] min-h-full bg-base-200 text-base-content"
 		>
-			<Navbar />
-
 			<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-2">
 				{#if $events.isError}
 					{$events.error.message}

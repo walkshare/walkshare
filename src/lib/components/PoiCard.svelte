@@ -5,10 +5,11 @@
 	import { capitalize } from '$lib/util';
 
 	export let poi: Poi;
+	export let background = false;
 </script>
 
-<div class="card w-full hover:bg-base-100 p-2 duration-200 transition-all">
-	<figure class="relative">
+<div class="card w-full hover:bg-base-100 p-4 duration-200 transition-all" class:bg-base-200={background}>
+	<figure class="relative pt-0 mt-0">
 		<div class="w-full h-32 bg-base-300 rounded-xl overflow-hidden">
 			<img src="{PUBLIC_BASE_URL}/pois/{poi.id}/thumbnail" alt={poi.name} />
 		</div>

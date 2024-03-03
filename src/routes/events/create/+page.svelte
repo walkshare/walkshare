@@ -4,6 +4,8 @@
 	import { TRPCClientError } from '@trpc/client';
 	import Flatpickr from 'svelte-flatpickr';
 
+	import Arrow from '~icons/ic/baseline-arrow-forward';
+	import Sparkles from '~icons/ic/baseline-auto-awesome';
 	import { trpc } from '$lib/client';
 	import PoiCard from '$lib/components/PoiCard.svelte';
 	import type { Poi } from '$lib/server/schema';
@@ -21,6 +23,7 @@
 	};
 
 	let itinerary: Poi[] = [];
+	let loadingItinerary = false;
 
 	async function submit() {
 		try {
@@ -43,10 +46,12 @@
 
 	async function createItinerary() {
 		navigator.geolocation.getCurrentPosition(async (position) => {
+			loadingItinerary = true;
 			itinerary = await trpc.itinerary.create.query({
 				lat: position.coords.latitude,
 				long: position.coords.longitude,
 			});
+			loadingItinerary = false;
 		});
 	}
 
@@ -55,7 +60,7 @@
 </script>
 
 <div class="flex justify-center pt-32">
-	<form class="max-w-4xl w-full grid md:grid-cols-2 gap-4">
+	<form class="max-w-4xl w-full grid md:grid-cols-2 gap-x-4 gap-y-16">
 		<div class="flex flex-col gap-4 prose">
 			<input bind:value={event.name} class="input rounded-xl border-none bg-base-200 p-4" placeholder="Add name..." />
 			<textarea bind:value={event.description} class="textarea rounded-xl bg-base-200 p-4 min-h-96" placeholder="Add description..." />
@@ -63,19 +68,6 @@
 			{#if error}
 				{error}
 			{/if}
-
-			<h2>Itinerary</h2>
-			<button on:click={createItinerary}>
-				generate itinerary :sparkles:
-			</button>
-
-			<div class="itinerary-grid grid gap-2">
-				{#each itinerary as poi}
-					<PoiCard {poi} />
-				{/each}
-			</div>
-
-			<button class="btn" on:click={submit}> Create </button>
 		</div>
 
 		<div class="flex flex-col gap-2">
@@ -139,11 +131,34 @@
 				</form>
 			</div>
 		</div>
+
+		<div class="flex flex-col gap-4 prose">
+			<h2>Itinerary</h2>
+
+			{#if itinerary.length}
+				<div class="itinerarygrid gap-2 lg:grid-cols-3 col-span-2">
+					{#each itinerary as poi}
+						<PoiCard {poi} background />
+					{/each}
+				</div>
+			{:else}
+				<div class="flex flex-row flex-wrap gap-2 col-span-2">
+					<span>You don't have an itinerary yet.</span>
+					<button class="btn btn-accent btn-sm w-fit" on:click={createItinerary}>
+						{#if loadingItinerary}
+							<span class="loading loading-dots loading-sm"></span>
+						{/if}
+
+						Create itinerary <Sparkles />
+					</button>
+				</div>
+			{/if}
+		</div>
+
+		<div class="flex flex-col gap-4 prose">
+			<button class="btn btn-primary mt-auto place-self-end" on:click={submit}>
+				Create <Arrow />
+			</button>
+		</div>
 	</form>
 </div>
-
-<style>
-	.itinerary-grid {
-		grid-template-columns: repeat(auto-fill, minmax(17.5rem, 1fr))
-	}
-</style>
