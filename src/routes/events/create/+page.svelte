@@ -4,6 +4,7 @@
 	import { TRPCClientError } from '@trpc/client';
 	import Flatpickr from 'svelte-flatpickr';
 
+	import Back from '~icons/ic/baseline-arrow-back';
 	import Arrow from '~icons/ic/baseline-arrow-forward';
 	import Sparkles from '~icons/ic/baseline-auto-awesome';
 	import { goto } from '$app/navigation';
@@ -75,6 +76,10 @@
 	let error: string | undefined = undefined;
 	let tag: string;
 </script>
+
+<a class="absolute top-4 left-4 btn btn-ghost btn-square rounded-full" href="/">
+	<Back class="text-3xl" />
+</a>
 
 <form class="grid justify-center pt-32" on:submit|preventDefault={submit}>
 	<div class="max-w-4xl w-full grid md:grid-cols-2 gap-x-4 gap-y-16">
