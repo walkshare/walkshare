@@ -23,7 +23,6 @@ export type ItineraryWithPoi = z.infer<typeof ItineraryWithPoi>;
 export const Event = createInsertSchema(event, {
 	tags: z.string().array(),
 	startsAt: z.coerce.date(),
-	endsAt: z.coerce.date(),
 })
 	.omit({
 		embedding: true,

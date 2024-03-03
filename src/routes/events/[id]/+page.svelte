@@ -25,33 +25,40 @@
 	}
 </script>
 
-{#if $event.isError}
-	{$event.error.message}
-{:else if $event.isLoading}
-	loading...
-{:else if $event.isSuccess}
-	<div class="p-4 rounded-lg shadow-md">
-		<img alt="Event." src="/events/{$event.data.id}/thumbnail" />
+<div class="flex justify-center pt-32">
+	{#if $event.isError}
+		{$event.error.message}
+	{:else if $event.isLoading}
+		loading...
+	{:else if $event.isSuccess}
+		<div class="max-w-3xl p-4 flex flex-col gap-8">
+			<img alt={$event.data.name} src="/events/{$event.data.id}/thumbnail" class="rounded-2xl" />
 
-		<h2 class="text-xl font-bold">{$event.data.name}</h2>
-		<p>{$event.data.description}</p>
+			<div class="flex flex-row gap-2 flex-wrap relative">
+				{#each $event.data.tags as tag}
+					<span class="badge badge-neutral badge-lg">{tag}</span>
+				{/each}
 
-		<p>Starts at:</p>
-		<p>{new Date($event.data.startsAt).toUTCString()}</p>
+				<p class="absolute right-0">{new Date($event.data.startsAt).toUTCString()}</p>
+			</div>
 
-		<p>Tags:</p>
-		{#each $event.data.tags as t}
-			{t}
-		{/each}
+			<h1 class="text-xl font-bold">{$event.data.name}</h1>
 
-		{#if joined}
-			<button class="btn" on:click={leaveEvent}> Leave </button>
-		{:else}
-			<button class="btn" on:click={joinEvent}> Join </button>
-		{/if}
+			<div class="prose">
+				<!-- SAFETY: the description is sanitized server-side -->
+				<!-- eslint-disable-next-line svelte/no-at-html-tags -->
+				{@html $event.data.description}
+			</div>
 
-		{#each $event.data.itinerary as i}
-			<PoiCard poi={i.poi} />
-		{/each}
-	</div>
-{/if}
+			{#if joined}
+				<button class="btn" on:click={leaveEvent}> Leave </button>
+			{:else}
+				<button class="btn" on:click={joinEvent}> Join </button>
+			{/if}
+
+			{#each $event.data.itinerary as i}
+				<PoiCard poi={i.poi} />
+			{/each}
+		</div>
+	{/if}
+</div>
