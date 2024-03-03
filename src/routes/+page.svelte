@@ -165,14 +165,16 @@
 			{/if}
 
 			{#each Array.from(users.entries()) as [id, coords]}
-				<Marker
-					lat={coords[1]}
-					lng={coords[0]}
-					label="Another user ({id})"
-					color={0x0000ff}
-				>
-					<Circle class="text-2xl text-green-500" />
-				</Marker>
+				{#if coords?.[0] && coords?.[1]}
+					<Marker
+						lat={coords[1]}
+						lng={coords[0]}
+						label="Another user ({id})"
+						color={0x0000ff}
+					>
+						<Circle class="text-2xl text-green-500" />
+					</Marker>
+				{/if}
 			{/each}
 		</Mapbox>
 	</div>
