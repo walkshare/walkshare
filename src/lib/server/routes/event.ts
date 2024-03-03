@@ -1,35 +1,73 @@
 import { TRPCError } from '@trpc/server';
-import { and, arrayOverlaps, eq, SQL } from 'drizzle-orm';
+import { and, arrayOverlaps, asc, eq, exists, SQL, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { procedure, router } from '$lib/server/trpc';
 import { protectedProcedure } from '$lib/server/trpc';
 
 import { db } from '../db';
-import { attendance, event } from '../db/schema';
-import { Event } from '../schema';
-import { convertMarkdown, embedText, maxInnerProduct } from '../util';
+import { attendance, event, itinerary } from '../db/schema';
+import { Event, EventWithItinerary } from '../schema';
+import { convertMarkdown, createEventEmbedding, embedText, maxInnerProduct } from '../util';
 
 export const app = router({
 	create: protectedProcedure
+		.meta({
+			openapi: {
+				method: 'POST',
+				path: '/event/create',
+				summary: 'Create event',
+				description: 'Creates an event',
+				tags: ['event'],
+			},
+		})
 		.input(
 			Event.omit({
 				id: true,
 				authorId: true,
 				createdAt: true,
 				embedding: true,
+			}).extend({
+				itinerary: z.string().uuid().array(),
 			}),
 		)
-		.output(z.void())
+		.output(z.string().uuid())
 		.mutation(async ({ input, ctx }) => {
 			input.description = convertMarkdown(input.description);
 
-			await db.insert(event).values({
+			const list = input.itinerary;
+
+			// @ts-expect-error - we remove this
+			input.itinerary = undefined;
+
+			const embedding = await createEventEmbedding(input);
+
+			const [{ id }] = await db.insert(event).values({
 				...input,
+				embedding,
 				authorId: ctx.session.user.userId,
+			}).returning({
+				id: event.id,
 			});
+
+			await db.insert(itinerary).values(list.map((l, i) => ({
+				eventId: id,
+				poiId: l,
+				index: i,
+			})));
+
+			return id;
 		}),
 	update: protectedProcedure
+		.meta({
+			openapi: {
+				method: 'PATCH',
+				path: '/event/update',
+				summary: 'Update event',
+				description: 'Updates an event',
+				tags: ['event'],
+			},
+		})
 		.input(
 			Event.partial()
 				.required({ id: true })
@@ -44,7 +82,8 @@ export const app = router({
 				input.description = convertMarkdown(input.description);
 			}
 
-			await db
+
+			const [e] = await db
 				.update(event)
 				.set(input)
 				.where(
@@ -52,79 +91,180 @@ export const app = router({
 						eq(event.id, input.id),
 						eq(event.authorId, ctx.session.user.userId),
 					),
-				);
+				).returning({
+					name: event.name,
+					description: event.description,
+					tags: event.tags,
+				});
+
+			const embedding = await createEventEmbedding(e);
+
+			await db
+				.update(event)
+				.set({ embedding })
+				.where(eq(event.id, input.id));
 		}),
 	delete: protectedProcedure
-		.input(z.string().uuid())
+		.meta({
+			openapi: {
+				method: 'DELETE',
+				path: '/event/{id}',
+				summary: 'Delete event',
+				description: 'Deletes an event',
+				tags: ['event'],
+			},
+		})
+		.input(z.object({
+			id: z.string().uuid(),
+		}))
 		.output(z.void())
 		.mutation(async ({ input, ctx }) => {
 			await db
 				.delete(event)
 				.where(
-					and(eq(event.id, input), eq(event.authorId, ctx.session.user.userId)),
+					and(eq(event.id, input.id), eq(event.authorId, ctx.session.user.userId)),
 				);
 		}),
 	join: protectedProcedure
-		.input(z.string().uuid())
+		.meta({
+			openapi: {
+				method: 'POST',
+				path: '/event/{id}/join',
+				summary: 'Join event',
+				description: 'Join an event with the current logged in account.',
+				tags: ['event'],
+			},
+		})
+		.input(z.object({
+			id: z.string().uuid(),
+		}))
 		.output(z.void())
 		.mutation(async ({ input, ctx }) => {
 			await db.insert(attendance).values({
-				eventId: input,
+				eventId: input.id,
 				userId: ctx.session.user.userId,
 			});
 		}),
 	leave: protectedProcedure
-		.input(z.string().uuid())
+		.meta({
+			openapi: {
+				method: 'POST',
+				path: '/event/{id}/leave',
+				summary: 'Leave event',
+				description: 'Leave an event with the current logged in account.',
+				tags: ['event'],
+			},
+		})
+		.input(z.object({
+			id: z.string().uuid(),
+		}))
 		.output(z.void())
 		.mutation(async ({ input, ctx }) => {
 			await db
 				.delete(attendance)
 				.where(
 					and(
-						eq(attendance.eventId, input),
+						eq(attendance.eventId, input.id),
 						eq(attendance.userId, ctx.session.user.userId),
 					),
 				);
 		}),
-	getOne: procedure.input(z.string().uuid()).output(Event).query(async ({ input }) => {
-		const data = await db.query.event.findFirst({ where: eq(event.id, input) });
+	getOne: procedure
+		.meta({
+			openapi: {
+				method: 'GET',
+				path: '/event/{id}',
+				summary: 'Get an event',
+				description: 'Get an event with the corresponding id.',
+				tags: ['event'],
+			},
+		})
+		.input(z.object({
+			id: z.string().uuid(),
+		}))
+		.output(EventWithItinerary.extend({ joined: z.boolean() }))
+		.query(async ({ input, ctx }) => {
+			const data = await db.query.event.findFirst({
+				where: eq(event.id, input.id),
+				with: {
+					itinerary: {
+						with: {
+							poi: true,
+						},
+						orderBy: [asc(itinerary.index)],
+					},
+					author: true,
 
-		if (!data) {
-			throw new TRPCError({
-				message: 'event_not_found',
-				code: 'NOT_FOUND',
-			})
-		}
+				},
+				extras: {
+					joined: ctx.session ? (exists(db.select({
+						value: sql`1`,
+					})
+						.from(attendance)
+						.where(and(
+							eq(attendance.userId, ctx.session.user.userId),
+							eq(attendance.eventId, input.id),
+						))) as SQL<boolean>).as('j')
+						: sql<boolean>`false`.as('j'),
+				},
+			});
 
-		return data;
-	}),
-	getAll: procedure.input(z.object({
-		page: z.number().int().min(1),
-		limit: z.number().int().min(10).max(50),
-		query: z.string().max(128),
-		tags: z.string().array(),
-	})).output(Event.array()).query(async ({ input }) => {
-		const filters: SQL[] = [];
-		const orders: SQL<number>[] = [];
+			if (!data) {
+				throw new TRPCError({
+					message: 'event_not_found',
+					code: 'NOT_FOUND',
+				})
+			}
 
-		if (input.tags.length) {
-			filters.push(arrayOverlaps(event.tags, input.tags));
-		}
+			return data;
+		}),
+	getAll: procedure
+		.meta({
+			openapi: {
+				method: 'POST',
+				path: '/event',
+				summary: 'Get all events',
+				description: 'Get all events',
+				tags: ['event'],
+			},
+		})
+		.input(z.object({
+			page: z.number().int().min(1),
+			limit: z.number().int().min(10).max(50),
+			query: z.string().max(128),
+			tags: z.string().array(),
+		})).output(EventWithItinerary.array())
+		.mutation(async ({ input }) => {
+			const filters: SQL[] = [];
+			const orders: SQL<number>[] = [];
 
-		if (input.query) {
-			const embedded = await embedText(input.query);
-			orders.push(maxInnerProduct(event.embedding, embedded));
-		}
+			if (input.tags.length) {
+				filters.push(arrayOverlaps(event.tags, input.tags));
+			}
 
-		const data = await db.query.event.findMany({
-			offset: (input.page - 1) * input.limit,
-			limit: input.limit,
-			where: and(...filters),
-			orderBy: orders,
-		});
+			if (input.query) {
+				const embedded = await embedText(input.query);
+				orders.push(maxInnerProduct(event.embedding, embedded));
+			}
 
-		return data;
-	}),
+			const data = await db.query.event.findMany({
+				offset: (input.page - 1) * input.limit,
+				limit: input.limit,
+				where: and(...filters),
+				orderBy: orders,
+				with: {
+					itinerary: {
+						with: {
+							poi: true,
+						},
+						orderBy: [asc(itinerary.index)],
+					},
+					author: true,
+				},
+			});
+
+			return data;
+		}),
 });
 
 export default app;

@@ -24,4 +24,5 @@ def embed():
 	}
 
 if __name__ == "__main__":
+	print("listening on", getenv('TEXT_EMBEDDER_PORT', '5000'))
 	serve(app, host='0.0.0.0', port=int(getenv('TEXT_EMBEDDER_PORT', '5000')))

@@ -43,12 +43,12 @@ export function convertMarkdown(
 	return sanitizeHtml(converter.makeHtml(markdown));
 }
 
-export function createEventEmbedding(event: Event): Promise<number[]> {
+export function createEventEmbedding(event: Pick<Event, 'name' | 'description' | 'tags'>): Promise<number[]> {
 	const text = `${event.name} ${event.description} ${event.tags.join(' ')}`;
 	return embedText(text);
 }
 
-export function createPoiEmbedding(poi: Poi): Promise<number[]> {
+export function createPoiEmbedding(poi: Pick<Poi, 'name' | 'description' | 'tags' | 'address'>): Promise<number[]> {
 	const text = `${poi.name} ${poi.address} ${poi.description} ${poi.tags.join(' ')}`;
 	return embedText(text);
 }
