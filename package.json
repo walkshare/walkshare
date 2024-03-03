@@ -65,6 +65,7 @@
 		"showdown": "^2.1.0",
 		"solclientjs": "^10.15.0",
 		"svelte-flatpickr": "^3.3.4",
+		"svelte-french-toast": "^1.2.0",
 		"sveltekit-i18n": "^2.4.2",
 		"trpc-openapi": "^1.2.0",
 		"trpc-sveltekit": "^3.5.28",

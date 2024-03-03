@@ -11,26 +11,38 @@
 	import EventCard from '$lib/components/EventCard.svelte';
 
 	import type { PageData } from './$types';
+	import { distance } from '$lib/util';
+
+	import toast from 'svelte-french-toast';
 
 	export let data: PageData;
 
 	let coords: [number, number] | undefined = undefined;
 	let users = new Map<string, [number, number]>();
 
+	const NOTIFICATION_DISTANCE_THRESHOLD = 4200;
+
+	const notifiedPois: Set<string> = new Set();
+
 	onMount(() => {
 		navigator.geolocation.watchPosition((position) => {
 			coords = [position.coords.longitude, position.coords.latitude];
 
 			if (data.user) {
-				publisher.publish('location', JSON.stringify({
-					coords,
-					id: data.user.userId,
-				}));
+				publisher.publish(
+					'location',
+					JSON.stringify({
+						coords,
+						id: data.user.userId,
+					}),
+				);
 			}
 		});
 
 		subscriber.subscribe('location', (message) => {
-			const { coords, id } = JSON.parse(message.getBinaryAttachment() as string);
+			const { coords, id } = JSON.parse(
+				message.getBinaryAttachment() as string,
+			);
 			if (id === data.user?.userId) return;
 
 			users.set(id, coords);
@@ -41,36 +53,73 @@
 
 		subscriber.subscribe('join', () => {
 			if (data.user) {
-				publisher.publish('location', JSON.stringify({
-					coords,
-					id: data.user.userId,
-				}));
+				publisher.publish(
+					'location',
+					JSON.stringify({
+						coords,
+						id: data.user.userId,
+					}),
+				);
 			}
 		});
 
 		publisher.publish('join', '');
+
+		subscriber.subscribe('close', (message) => {
+			const { name, poi, id } = JSON.parse(
+				message.getBinaryAttachment() as string,
+			);
+
+			if (id === data.user?.userId) return;
+
+			toast.success(`${name} has arrived at ${poi}!`);
+		});
 	});
 
 	const events = createQuery({
 		queryKey: ['events'],
-		queryFn: () => trpc.event.getAll.mutate({
-			query: '',
-			tags: [],
-			page: 1,
-			limit: 10,
-		}),
+		queryFn: () =>
+			trpc.event.getAll.mutate({
+				query: '',
+				tags: [],
+				page: 1,
+				limit: 10,
+			}),
 	});
 
 	const points = createQuery({
 		queryKey: ['points'],
-		queryFn: () => trpc.poi.getAll.mutate({
-			query: '',
-			tags: [],
-			lat: coords?.[1] ?? 0,
-			lng: coords?.[0] ?? 0,
-			distance: 0.2,
-		}),
+		queryFn: () =>
+			trpc.poi.getAll.mutate({
+				query: '',
+				tags: [],
+				lat: coords?.[1] ?? 0,
+				lng: coords?.[0] ?? 0,
+				distance: 0.2,
+			}),
 	});
+
+	$: if (data.user && $points.isSuccess && coords) {
+		for (const point of $points.data) {
+			if (
+				distance(coords, [point.latitude, point.longitude]) <
+				NOTIFICATION_DISTANCE_THRESHOLD
+			) {
+				if (notifiedPois.has(point.name)) continue;
+
+				notifiedPois.add(point.name);
+
+				publisher.publish(
+					'close',
+					JSON.stringify({
+						id: data.user.userId,
+						poi: point.name,
+						name: data.user.username,
+					}),
+				);
+			}
+		}
+	}
 </script>
 
 <div class="drawer lg:drawer-open">
