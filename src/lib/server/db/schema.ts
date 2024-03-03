@@ -35,8 +35,7 @@ export const event = pgTable('event', {
 	description: text('description').notNull(),
 	thumbnail: text('thumbnail').notNull(),
 	tags: text('tags').array().notNull(),
-	startsAt: timestamp('start_time', { withTimezone: true }).notNull(),
-	endsAt: timestamp('end_time', { withTimezone: true }).notNull(),
+	startsAt: timestamp('starts_at', { withTimezone: true }).notNull(),
 	createdAt: timestamp('created_at', { withTimezone: true })
 		.defaultNow()
 		.notNull(),

@@ -1,5 +1,6 @@
 import "dotenv/config";
 
+import sharp from 'sharp';
 import axios from 'axios';
 import * as fs from "fs";
 import pg from "pg";
@@ -32,6 +33,18 @@ async function main() {
 		const d = places2.find(p => p.id === place.id);
 		if (!d) continue;
 
+		let data;
+
+		try {
+			data = (await sharp(fs.readFileSync(`./data/images/${place.id}`)).resize(1920, 1080, {
+				fit: 'cover',
+				position: 'center',
+			}).webp().toBuffer()).toString('base64');
+		} catch (e) {
+			console.log(e);
+			continue;
+		}
+
 		const poi = {
 			name: place.name,
 			adress: place.address,
@@ -46,7 +59,7 @@ async function main() {
 			description, thumbnail, address, embedding) VALUES ($1, $2, $3, $4,
 				$5, $6, $7, $8)`,
 			[place.name, place.point.coordinates[1],
-			place.point.coordinates[0], place.types, d.description, "test",
+			place.point.coordinates[0], place.types, d.description, data,
 			place.address, `[${embedding.join(',')}]`]);
 	}
 }

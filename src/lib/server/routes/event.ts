@@ -265,6 +265,26 @@ export const app = router({
 
 			return data;
 		}),
+	recommended: procedure
+		.meta({
+			openapi: {
+				method: 'POST',
+				path: '/event/recommended',
+				summary: 'Get recommended events.',
+				description: 'Get events similar to the provided event.',
+				tags: ['event'],
+			},
+		})
+		.input(z.object({ id: z.string().uuid() }))
+		.output(Event.array())
+		.query(async () => {
+			const data = await db.query.event.findMany({
+				limit: 10,
+			})
+
+			return data;
+		}),
+
 });
 
 export default app;

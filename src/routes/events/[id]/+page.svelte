@@ -1,7 +1,8 @@
 <script lang="ts">
+	import { createQuery } from '@tanstack/svelte-query';
+
 	import { page } from '$app/stores';
 	import { trpc } from '$lib/client';
-	import { createQuery } from '@tanstack/svelte-query';
 	import PoiCard from '$lib/components/PoiCard.svelte';
 
 	$: event = createQuery({
@@ -37,9 +38,6 @@
 
 		<p>Starts at:</p>
 		<p>{new Date($event.data.startsAt).toUTCString()}</p>
-
-		<p>Ends at:</p>
-		<p>{new Date($event.data.endsAt).toUTCString()}</p>
 
 		<p>Tags:</p>
 		{#each $event.data.tags as t}
