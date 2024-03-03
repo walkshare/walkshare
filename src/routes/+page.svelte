@@ -158,16 +158,10 @@
 					>
 						<Pin class="text-2xl text-red-400" />
 
-						<div slot="popup" class="card bg-base-200 card-side p-2">
-							<div class="card-body">
-								<h1 class="text-lg font-bold">{point.name}</h1>
-								<p class="text-md line-clamp-4">{point.description}</p>
-							</div>
-
-							<figure>
-								<img src="/pois/{point.id}/thumbnail" alt={point.name} />
-							</figure>
-						</div>
+						<a slot="popup" href="/pois/{point.id}">
+							<h1 class="text-lg font-bold">{point.name}</h1>
+							<p class="text-md line-clamp-4">{point.description}</p>
+						</a>
 					</Marker>
 				{/each}
 			{/if}
@@ -214,8 +208,7 @@
 
 <style>
 	:global(.mapboxgl-popup-content) {
-		background-color: transparent !important;
-		display: block !important;
+		@apply bg-base-200 rounded-xl overflow-hidden p-6 !important;
 	}
 
 	:global(.mapboxgl-popup-tip) {

@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { createQuery } from '@tanstack/svelte-query';
 
+	import Back from '~icons/ic/baseline-arrow-back';
 	import { page } from '$app/stores';
 	import { trpc } from '$lib/client';
 	import PoiCard from '$lib/components/PoiCard.svelte';
+	import { capitalize } from '$lib/util';
 
 	$: event = createQuery({
 		queryKey: ['event'],
@@ -19,7 +21,11 @@
 	}
 </script>
 
-<div class="flex justify-center pt-32">
+<a class="absolute top-4 left-4 btn btn-ghost" href="/">
+	<Back class="text-3xl" />
+</a>
+
+<div class="flex justify-center py-32">
 	{#if $event.isError}
 		{$event.error.message}
 	{:else if $event.isLoading}
@@ -31,7 +37,7 @@
 			<div class="grid md:grid-cols-3">
 				<div class="flex flex-row gap-2 flex-wrap relative md:col-span-2">
 					{#each $event.data.tags as tag}
-						<span class="badge badge-neutral badge-lg">{tag}</span>
+					<span class="badge badge-neutral badge-lg">{capitalize(tag)}</span>
 					{/each}
 				</div>
 
