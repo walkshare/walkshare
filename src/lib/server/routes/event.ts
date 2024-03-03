@@ -1,5 +1,5 @@
 import { TRPCError } from '@trpc/server';
-import { and, arrayOverlaps, asc, eq, exists, SQL,sql } from 'drizzle-orm';
+import { and, arrayOverlaps, asc, eq, exists, SQL, sql } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { procedure, router } from '$lib/server/trpc';
@@ -182,9 +182,8 @@ export const app = router({
 		.input(z.object({
 			id: z.string().uuid(),
 		}))
-		.output(EventWithItinerary.extend({joined: z.boolean()}))
+		.output(EventWithItinerary.extend({ joined: z.boolean() }))
 		.query(async ({ input, ctx }) => {
-			
 			const data = await db.query.event.findFirst({
 				where: eq(event.id, input.id),
 				with: {
@@ -195,21 +194,28 @@ export const app = router({
 						orderBy: [asc(itinerary.index)],
 					},
 					author: true,
-					
+
 				},
 				extras: {
-					joined: ctx.session ? exists(db.select({ value: sql`1` }).from(attendance).where(and(eq(attendance.userId, ctx.session.user.userId), eq(attendance.eventId, input.id)))).as('j') : sql<boolean>`false`,
+					joined: ctx.session ? (exists(db.select({
+						value: sql`1`,
+					})
+						.from(attendance)
+						.where(and(
+							eq(attendance.userId, ctx.session.user.userId),
+							eq(attendance.eventId, input.id),
+						))) as SQL<boolean>).as('j')
+						: sql<boolean>`false`.as('j'),
 				},
-				
 			});
-			
+
 			if (!data) {
 				throw new TRPCError({
 					message: 'event_not_found',
 					code: 'NOT_FOUND',
 				})
 			}
-			
+
 			return data;
 		}),
 	getAll: procedure
