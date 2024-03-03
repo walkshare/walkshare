@@ -7,15 +7,23 @@
 	export let event: EventWithItinerary;
 </script>
 
-<a class="card w-full hover:bg-base-100 p-2 duration-200 transition-all" href="/events/{event.id}">
+<a
+	class="card w-full hover:bg-neutral p-2 duration-200 transition-all bg-base-100"
+	href="/events/{event.id}"
+>
 	<figure class="relative">
 		<div class="w-full h-32 bg-base-300 rounded-xl overflow-hidden">
-			<img src="{PUBLIC_BASE_URL}/events/{event.id}/thumbnail" alt={event.name} />
+			<img
+				src="{PUBLIC_BASE_URL}/events/{event.id}/thumbnail"
+				alt={event.name}
+			/>
 		</div>
 
 		<div class="absolute top-2 left-2 flex flex-row flex-wrap gap-2">
 			{#each event.tags.slice(0, 3) as tag}
-				<span class="badge badge-secondary bg-white border-white">{capitalize(tag)}</span>
+				<span class="badge badge-secondary bg-white border-white"
+					>{capitalize(tag)}</span
+				>
 			{/each}
 		</div>
 	</figure>

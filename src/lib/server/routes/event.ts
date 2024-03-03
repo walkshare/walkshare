@@ -1,5 +1,6 @@
 import { TRPCError } from '@trpc/server';
 import { and, arrayOverlaps, asc, eq, exists, SQL, sql } from 'drizzle-orm';
+import sharp from 'sharp';
 import { z } from 'zod';
 
 import { procedure, router } from '$lib/server/trpc';
@@ -39,6 +40,18 @@ export const app = router({
 
 			// @ts-expect-error - we remove this
 			input.itinerary = undefined;
+
+			input.thumbnail = input.thumbnail && (await sharp(
+				Buffer.from(input.thumbnail.slice(input.thumbnail.indexOf(',') + 1), 'base64'),
+			)
+				.resize(1920, 1080, {
+					fit: 'cover',
+					position: 'center',
+				})
+				.webp()
+				.toBuffer()
+			)
+				.toString('base64');
 
 			const embedding = await createEventEmbedding(input);
 

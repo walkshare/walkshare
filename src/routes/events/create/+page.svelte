@@ -6,6 +6,7 @@
 
 	import Arrow from '~icons/ic/baseline-arrow-forward';
 	import Sparkles from '~icons/ic/baseline-auto-awesome';
+	import { goto } from '$app/navigation';
 	import { trpc } from '$lib/client';
 	import PoiCard from '$lib/components/PoiCard.svelte';
 	import type { Poi } from '$lib/server/schema';
@@ -25,12 +26,28 @@
 	let itinerary: Poi[] = [];
 	let loadingItinerary = false;
 
+	$: {
+		if (files) {
+			const file = files[0];
+			const reader = new FileReader();
+
+			reader.onload = () => {
+				event.thumbnail = reader.result as string;
+			};
+
+			reader.readAsDataURL(file);
+		}
+	}
+
 	async function submit() {
 		try {
-			await trpc.event.create.mutate({
+			const id = await trpc.event.create.mutate({
 				...event,
 				itinerary: itinerary.map(poi => poi.id),
 			});
+
+			// navigate to the event page
+			goto(`/events/${id}`);
 		} catch (e) {
 			if (e instanceof TRPCClientError) {
 				error = e.message;
@@ -60,7 +77,7 @@
 </script>
 
 <div class="flex justify-center pt-32">
-	<form class="max-w-4xl w-full grid md:grid-cols-2 gap-x-4 gap-y-16">
+	<form class="max-w-4xl w-full grid md:grid-cols-2 gap-x-4 gap-y-16" on:submit|preventDefault={submit}>
 		<div class="flex flex-col gap-4 prose">
 			<input bind:value={event.name} class="input rounded-xl border-none bg-base-200 p-4" placeholder="Add name..." />
 			<textarea bind:value={event.description} class="textarea rounded-xl bg-base-200 p-4 min-h-96" placeholder="Add description..." />
@@ -156,7 +173,7 @@
 		</div>
 
 		<div class="flex flex-col gap-4 prose">
-			<button class="btn btn-primary mt-auto place-self-end" on:click={submit}>
+			<button class="btn btn-primary mt-auto place-self-end">
 				Create <Arrow />
 			</button>
 		</div>

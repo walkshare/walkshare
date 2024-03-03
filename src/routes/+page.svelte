@@ -20,7 +20,7 @@
 	let coords: [number, number] | undefined = undefined;
 	let users = new Map<string, [number, number]>();
 
-	const NOTIFICATION_DISTANCE_THRESHOLD = 4200;
+	const NOTIFICATION_DISTANCE_THRESHOLD = 15700;
 
 	const notifiedPois: Set<string> = new Set();
 
@@ -70,7 +70,7 @@
 				message.getBinaryAttachment() as string,
 			);
 
-			if (id === data.user?.userId) return;
+			//if (id === data.user?.userId) return;
 
 			toast.success(`${name} has arrived at ${poi}!`);
 		});
@@ -101,8 +101,11 @@
 
 	$: if (data.user && $points.isSuccess && coords) {
 		for (const point of $points.data) {
+			console.log(
+				distance(coords[0], coords[1], point.latitude, point.longitude),
+			);
 			if (
-				distance(coords, [point.latitude, point.longitude]) <
+				distance(coords[0], coords[1], point.latitude, point.longitude) <
 				NOTIFICATION_DISTANCE_THRESHOLD
 			) {
 				if (notifiedPois.has(point.name)) continue;
