@@ -120,7 +120,7 @@
 		>
 			<Navbar />
 
-			<div class="event-grid grid gap-4 p-2">
+			<div class="grid grid-cols-1 sm:grid-cols-2 gap-4 p-2">
 				{#if $events.isError}
 					{$events.error.message}
 				{:else if $events.isLoading}
@@ -141,9 +141,3 @@
 		</a>
 	</div>
 </div>
-
-<style>
-	.event-grid {
-		grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
-	}
-</style>
