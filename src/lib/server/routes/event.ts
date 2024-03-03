@@ -195,12 +195,14 @@ export const app = router({
 		.input(z.object({
 			id: z.string().uuid(),
 		}))
-		.output(EventWithItinerary.extend({ joined: z.boolean(),
-			count: z.number()}))
+		.output(EventWithItinerary.extend({
+			joined: z.boolean(),
+			count: z.number()
+		}))
 		.query(async ({ input, ctx }) => {
 
-			const at = db.select({value: count()}).from(attendance).where(eq(attendance.eventId, input.id));
-			
+			const at = db.select({ value: count() }).from(attendance).where(eq(attendance.eventId, input.id));
+
 			const data = await db.query.event.findFirst({
 				where: eq(event.id, input.id),
 				with: {
@@ -227,7 +229,6 @@ export const app = router({
 				},
 			});
 
-			console.log(data);
 			if (!data) {
 				throw new TRPCError({
 					message: 'event_not_found',

@@ -9,6 +9,8 @@
 	import PoiCard from '$lib/components/PoiCard.svelte';
 	import { capitalize } from '$lib/util';
 
+	import type { PageData } from './$types';
+
 	let mapbox: Mapbox;
 	let ready = false;
 
@@ -95,6 +97,8 @@
 				});
 			});
 	}
+
+	export let data: PageData;
 </script>
 
 <a class="absolute top-4 left-4 btn btn-ghost btn-square rounded-full" href="/">
@@ -128,13 +132,16 @@
 							{$event.data.count}
 							{$event.data.count === 1 ? 'person' : 'people'} attending.
 						</p>
-						<button class="btn btn-primary w-fit" on:click={toggle}>
-							{#if joined}
-								Leave
-							{:else}
-								Join
-							{/if}
-						</button>
+						
+						{#if data.user}
+							<button class="btn btn-primary w-fit" on:click={toggle}>
+								{#if joined}
+									Leave
+								{:else}
+									Join
+								{/if}
+							</button>
+						{/if}
 					</div>
 				</div>
 			</div>
@@ -161,9 +168,7 @@
 					center={$event.data.itinerary[0] ? [$event.data.itinerary[0].poi.longitude, $event.data.itinerary[0].poi.latitude] : [-75.695, 45.424721]}
 					style="mapbox://styles/mapbox/outdoors-v11"
 					zoom={15}
-				>
-			
-				</Mapbox>
+				/>
 			</div>
 		</div>
 	{/if}
