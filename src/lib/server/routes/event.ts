@@ -197,7 +197,7 @@ export const app = router({
 		}))
 		.output(EventWithItinerary.extend({
 			joined: z.boolean(),
-			count: z.number()
+			count: z.number(),
 		}))
 		.query(async ({ input, ctx }) => {
 
